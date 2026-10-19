@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#661414">
+  <meta name="description" content="Idibi — rios, território e vida na Amazônia.">
+  <title>Idibi — Rios que adoecem</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="content.js"></script>
+  <script defer src="figma-reader.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#capa" aria-label="Idibi — início">
+      <img src="assets/images/idibi-logo.svg" alt="">
+      <span>idibi</span>
+    </a>
+    <span class="reader-location" id="reader-location" aria-live="polite">Capa da edição</span>
+    <button class="index-trigger" id="index-trigger" type="button" aria-expanded="false" aria-controls="index-drawer">
+      <span class="menu-icon" aria-hidden="true"><i></i><i></i></span>
+      <span>Índice</span>
+    </button>
+    <div class="top-progress" aria-hidden="true"><span id="top-progress-fill"></span></div>
+  </header>
+
+  <main id="magazine" aria-label="Revista digital Idibi"></main>
+
+  <aside class="index-drawer" id="index-drawer" hidden aria-label="Índice da edição">
+    <div class="drawer-head"><span>Idibi <i>·</i> Edição 01</span><button id="close-index" type="button" aria-label="Fechar índice">×</button></div>
+    <a class="drawer-summary" href="#sumario">Sumário <span>↗</span></a>
+    <ol id="drawer-links"></ol>
+  </aside>
+  <div class="drawer-scrim" id="drawer-scrim" hidden></div>
+
+  <nav class="reader-controls" aria-label="Navegação da revista">
+    <span class="page-count" id="page-count">01 <i>/</i> 28</span>
+    <button id="zoom-page" type="button" aria-label="Ampliar página" title="Ampliar página">⤢</button>
+    <input id="page-range" type="range" min="0" max="27" value="0" step="1" aria-label="Escolher página da revista">
+    <button id="previous-page" type="button" aria-label="Página anterior">←</button>
+    <button id="next-page" type="button" aria-label="Próxima página">→</button>
+  </nav>
+
+  <dialog class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Fechar imagem">×</button>
+    <button class="lightbox-step lightbox-previous" id="lightbox-previous" type="button" aria-label="Imagem anterior">←</button>
+    <img id="lightbox-image" alt="">
+    <button class="lightbox-step lightbox-next" id="lightbox-next" type="button" aria-label="Próxima imagem">→</button>
+    <p id="lightbox-caption"></p>
+    <span class="lightbox-count" id="lightbox-count" aria-live="polite"></span>
+  </dialog>
+</body>
+</html>
