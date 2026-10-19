@@ -28,6 +28,15 @@
     ['contracapa', 'Contracapa', '26-contracapa.png'],
   ].map(([id, title, image]) => ({ id, title, image: `assets/images/figma-frames/${image}` }));
 
+  const teamMembers = [
+    ['Carlos Bellomo', 'assets/images/185-856-imgFoto-340.webp'],
+    ['Davi Arakaki', 'assets/images/185-856-imgFoto1-340.webp'],
+    ['João Maldonado', 'assets/images/185-856-imgFoto2-340.webp'],
+    ['Giulia Manara', 'assets/images/185-856-imgFoto3-340.webp'],
+    ['João Prado', 'assets/images/185-856-imgFoto4-340.webp'],
+    ['Rafael Passos', 'assets/images/185-856-imgFoto5-340.webp'],
+  ];
+
   const chapterTargets = {
     '01': 'sumario-editorial',
     '02': 'contextualizacao',
@@ -62,11 +71,37 @@
         '</div>' +
         '</div>'
       );
+      const teamMarkup = () => (
+        '<div class="figma-frame figma-frame--team" role="group" aria-label="Equipe Idibi">' +
+        '<div class="figma-team__water" aria-hidden="true">' +
+        '<img src="assets/images/185-856-imgAguinha-1662.webp" alt="" decoding="async">' +
+        '</div>' +
+        '<div class="figma-team__left-panel" aria-hidden="true"></div>' +
+        '<img class="figma-team__landscape" src="assets/images/185-856-imgImage5-600.webp" alt="Vista aérea dos rios e da floresta amazônica" width="600" height="400" decoding="async">' +
+        '<div class="figma-team__image-shade" aria-hidden="true"></div>' +
+        '<h1 class="figma-team__title">Rios que adoecem<br>Mercúrio, esgoto e<br>desigualdade na<br>Amazônia.</h1>' +
+        '<p class="figma-team__question">A Amazônia guarda a maior reserva de água doce do Brasil. Mas como é a vida na beira dos rios?</p>' +
+        '<p class="figma-team__label">Equipe Idibi</p>' +
+        '<ul class="figma-team__grid" aria-label="Integrantes da equipe">' +
+        teamMembers.map(([name, image], index) => (
+          '<li class="figma-team__member" style="--member-index:' + index + '">' +
+          '<button class="figma-team__portrait" type="button" data-team-photo="' + index + '" aria-label="Ampliar retrato de ' + escapeHtml(name) + '">' +
+          '<img src="' + image + '" alt="" width="170" height="170" draggable="false" decoding="async">' +
+          '</button>' +
+          '<span>' + escapeHtml(name) + '</span>' +
+          '</li>'
+        )).join('') +
+        '</ul>' +
+        '<p class="figma-team__credit">Instituto J&amp;F – Escola de Tecnologia · 2026</p>' +
+        '</div>'
+      );
       const scenesMarkup = pages.map((page, index) => {
         const title = escapeHtml(page.title);
         const frame = index === 0
           ? coverMarkup()
-          : '<figure class="figma-frame">' +
+          : index === 1
+            ? teamMarkup()
+            : '<figure class="figma-frame">' +
             '<img class="figma-export" src="' + page.image + '" alt="' + title + ' — página original da revista Idibi" draggable="false" ' +
             (index < 2 ? 'fetchpriority="high"' : 'loading="lazy"') + '>' +
             '</figure>';
@@ -100,6 +135,8 @@
       let activeSlot = 0;
       let transitionTimer = 0;
       let drawerTimer = 0;
+      let lightboxMode = 'page';
+      let activeTeamPhoto = 0;
       const motionAllowed = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       range.min = '0';
       range.max = String(pageSlots.length - 1);
@@ -124,7 +161,7 @@
           if (link.dataset.target === scenes[activeScene].id) link.setAttribute('aria-current', 'location');
           else link.removeAttribute('aria-current');
         });
-        if (lightbox.open) syncLightbox();
+        if (lightbox.open && lightboxMode === 'page') syncLightbox();
       };
 
       const showScene = (index, direction) => {
@@ -150,9 +187,11 @@
       };
 
       const goToSlot = (slot) => {
-        const safeSlot = Math.max(0, Math.min(pageSlots.length - 1, Number(slot)));
+        const requestedSlot = Number(slot);
+        if (!Number.isFinite(requestedSlot)) return;
+        const safeSlot = Math.max(0, Math.min(pageSlots.length - 1, requestedSlot));
         const targetScene = pageSlots[safeSlot];
-        const direction = targetScene >= activeScene ? 'next' : 'previous';
+        const direction = safeSlot >= activeSlot ? 'next' : 'previous';
         activeSlot = safeSlot;
         showScene(targetScene, direction);
         updateControls();
@@ -163,6 +202,20 @@
         const slots = slotsForScene(index);
         goToSlot(slots[0]);
       };
+
+      // Bind the reader controls before building optional index content so a
+      // missing chapter entry can never leave the next/previous buttons inert.
+      previous.addEventListener('click', () => goToSlot(activeSlot - 1));
+      next.addEventListener('click', () => goToSlot(activeSlot + 1));
+      range.addEventListener('input', () => goToSlot(range.value));
+      window.addEventListener('keydown', (event) => {
+        if (event.altKey || event.ctrlKey || event.metaKey || lightbox.open) return;
+        if (event.target instanceof Element && event.target.closest('input,textarea,select,button,[contenteditable="true"]')) return;
+        if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') { event.preventDefault(); goToSlot(activeSlot + 1); }
+        if (event.key === 'ArrowLeft' || event.key === 'PageUp') { event.preventDefault(); goToSlot(activeSlot - 1); }
+        if (event.key === 'Home') goToSlot(0);
+        if (event.key === 'End') goToSlot(pageSlots.length - 1);
+      });
 
       const chapters = window.IDIBI_DATA?.chapters || [];
       document.querySelector('#drawer-links').innerHTML = chapters.map((chapter) => {
@@ -215,9 +268,6 @@
       });
       document.querySelector('#cover-start')?.addEventListener('click', () => goToScene('equipe'));
 
-      previous.addEventListener('click', () => goToSlot(activeSlot - 1));
-      next.addEventListener('click', () => goToSlot(activeSlot + 1));
-      range.addEventListener('input', () => goToSlot(range.value));
       document.querySelector('#continue-reading')?.addEventListener('click', () => goToScene('equipe'));
 
       const syncLightbox = () => {
@@ -229,14 +279,37 @@
         lightboxCount.textContent = `${String(slots[0] + 1).padStart(2, '0')}${slots.length > 1 ? `–${String(slots.at(-1) + 1).padStart(2, '0')}` : ''} / 28`;
       };
       const openZoom = () => {
+        lightboxMode = 'page';
         syncLightbox();
         if (!lightbox.open) lightbox.showModal();
       };
+      const openTeamPhoto = (index) => {
+        activeTeamPhoto = (index + teamMembers.length) % teamMembers.length;
+        const [name, image] = teamMembers[activeTeamPhoto];
+        lightboxMode = 'team';
+        lightboxImage.src = image;
+        lightboxImage.alt = `Retrato de ${name}`;
+        lightboxCaption.textContent = `${name} · Equipe Idibi`;
+        lightboxCount.textContent = `${String(activeTeamPhoto + 1).padStart(2, '0')} / ${String(teamMembers.length).padStart(2, '0')}`;
+        if (!lightbox.open) lightbox.showModal();
+      };
+      magazine.addEventListener('click', (event) => {
+        const portrait = event.target.closest('[data-team-photo]');
+        if (portrait) openTeamPhoto(Number(portrait.dataset.teamPhoto));
+      });
+      const stepLightbox = (direction) => {
+        if (lightboxMode === 'team') {
+          openTeamPhoto(activeTeamPhoto + direction);
+          return;
+        }
+        goToSlot(activeSlot + direction);
+      };
       zoom.addEventListener('click', openZoom);
       document.querySelector('#lightbox-close').addEventListener('click', () => lightbox.close());
-      document.querySelector('#lightbox-previous').addEventListener('click', () => goToSlot(activeSlot - 1));
-      document.querySelector('#lightbox-next').addEventListener('click', () => goToSlot(activeSlot + 1));
+      document.querySelector('#lightbox-previous').addEventListener('click', () => stepLightbox(-1));
+      document.querySelector('#lightbox-next').addEventListener('click', () => stepLightbox(1));
       lightbox.addEventListener('click', (event) => { if (event.target === lightbox) lightbox.close(); });
+      lightbox.addEventListener('close', () => { lightboxMode = 'page'; });
 
       let touchStart = null;
       magazine.addEventListener('touchstart', (event) => {
@@ -250,16 +323,9 @@
         touchStart = null;
         if (Math.abs(dx) > 64 && Math.abs(dx) > Math.abs(dy) * 1.25) goToSlot(activeSlot + (dx < 0 ? 1 : -1));
       }, { passive: true });
-      window.addEventListener('keydown', (event) => {
-        if (event.altKey || event.ctrlKey || event.metaKey || lightbox.open) return;
-        if (event.target instanceof Element && event.target.closest('input,textarea,select,button,[contenteditable="true"]')) return;
-        if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') { event.preventDefault(); goToSlot(activeSlot + 1); }
-        if (event.key === 'ArrowLeft' || event.key === 'PageUp') { event.preventDefault(); goToSlot(activeSlot - 1); }
-        if (event.key === 'Home') goToSlot(0);
-        if (event.key === 'End') goToSlot(pageSlots.length - 1);
-      });
-
       updateControls();
     },
   };
 })();
+
+window.IDIBI_FIGMA_READER.render();

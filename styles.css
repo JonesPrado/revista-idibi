@@ -752,3 +752,293 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   .figma-edition .figma-cover__water img{animation:none}
   .figma-edition .figma-cover__lockup,.figma-edition .figma-cover__edition{animation:none;opacity:1}
 }
+
+/* Tela Equipe — coordenadas tipográficas e visuais adaptadas do frame 1440 × 1024. */
+.figma-edition .figma-frame--team{
+  display:block;
+  width:100vw;
+  height:100svh;
+  max-width:none;
+  max-height:none;
+  aspect-ratio:auto;
+  container-type:size;
+  background:#661414;
+  box-shadow:none;
+}
+.figma-edition .figma-team__water{
+  position:absolute;
+  z-index:0;
+  inset:0 0 0 47.7083cqw;
+  overflow:hidden;
+  background:#661414;
+  isolation:isolate;
+  pointer-events:none;
+}
+.figma-edition .figma-team__water img{
+  position:absolute;
+  z-index:0;
+  inset:-4%;
+  display:block;
+  width:108%;
+  height:108%;
+  object-fit:cover;
+  object-position:center;
+  opacity:.19;
+  transform:scale(1.025) rotate(180deg);
+  animation:team-water-drift 27s ease-in-out infinite alternate;
+}
+.figma-edition .figma-team__water::before,
+.figma-edition .figma-team__water::after{
+  position:absolute;
+  z-index:1;
+  inset:-18%;
+  content:"";
+  pointer-events:none;
+}
+.figma-edition .figma-team__water::before{
+  background:radial-gradient(ellipse at 24% 29%,rgba(185,236,255,.2),transparent 27%),radial-gradient(ellipse at 73% 66%,rgba(233,144,128,.15),transparent 31%),radial-gradient(ellipse at 86% 16%,rgba(185,236,255,.12),transparent 23%);
+  filter:blur(1.2rem);
+  opacity:.65;
+  animation:water-caustics 16s ease-in-out infinite alternate;
+}
+.figma-edition .figma-team__water::after{
+  background:linear-gradient(112deg,transparent 22%,rgba(185,236,255,.055) 39%,rgba(255,224,213,.075) 43%,transparent 56%),linear-gradient(24deg,transparent 58%,rgba(185,236,255,.055) 67%,transparent 77%);
+  mix-blend-mode:screen;
+  opacity:.7;
+  transform:translate3d(-4%,1%,0) rotate(-4deg) scale(1.12);
+  animation:water-sheen 12s cubic-bezier(.45,0,.55,1) infinite alternate;
+}
+.figma-edition .figma-team__left-panel{
+  position:absolute;
+  inset:0 auto 0 0;
+  width:47.7083cqw;
+  background:#661414;
+}
+.figma-edition .figma-team__landscape{
+  position:absolute;
+  z-index:1;
+  top:-.4883cqh;
+  left:-.625cqw;
+  display:block;
+  width:48.3333cqw;
+  height:45.3125cqh;
+  max-width:none;
+  object-fit:cover;
+  object-position:center;
+  transform:scale(1.045);
+  transition:transform 1.35s cubic-bezier(.16,1,.3,1),filter 1s ease;
+  filter:saturate(.92);
+}
+.figma-edition .figma-team__image-shade{
+  position:absolute;
+  z-index:2;
+  top:0;
+  left:0;
+  width:47.7083cqw;
+  height:45.3125cqh;
+  background:linear-gradient(104deg,rgba(12,20,19,.5) 0%,rgba(12,20,19,.28) 52%,rgba(12,20,19,.03) 84%,rgba(102,20,20,.42) 100%),linear-gradient(0deg,#661414 0%,rgba(102,20,20,.72) 8%,transparent 31%);
+  pointer-events:none;
+}
+.figma-edition .figma-scene.is-active .figma-team__landscape{
+  transform:scale(1);
+  filter:saturate(1);
+}
+.figma-edition .figma-team__title{
+  position:absolute;
+  z-index:3;
+  top:6.6406cqh;
+  left:4.4444cqw;
+  width:min(49.7222cqw,69.922cqh);
+  margin:0;
+  color:#b9ecff;
+  font:700 min(4.4444cqw,6.25cqh)/1 JosefinSlab,Georgia,serif;
+  letter-spacing:0;
+  text-shadow:0 2px 18px rgba(8,17,18,.38),0 1px 2px rgba(8,17,18,.44);
+  opacity:0;
+  transform:translate3d(-1.15rem,0,0);
+  transition:opacity .68s ease,transform .82s cubic-bezier(.16,1,.3,1);
+  transition-delay:.12s;
+}
+.figma-edition .figma-scene.is-active .figma-team__title{
+  opacity:1;
+  transform:translate3d(0,0,0);
+}
+.figma-edition .figma-team__question{
+  position:absolute;
+  z-index:2;
+  top:6.6406cqh;
+  right:3.75cqw;
+  width:min(40.5556cqw,57.03cqh);
+  margin:0;
+  color:#b9ecff;
+  font:700 min(2.2222cqw,3.125cqh)/1.18 JosefinSlab,Georgia,serif;
+  text-align:right;
+  opacity:0;
+  transform:translate3d(0,-.75rem,0);
+  transition:opacity .68s ease,transform .82s cubic-bezier(.16,1,.3,1);
+  transition-delay:.24s;
+}
+.figma-edition .figma-scene.is-active .figma-team__question{
+  opacity:1;
+  transform:translate3d(0,0,0);
+}
+.figma-edition .figma-team__label{
+  position:absolute;
+  z-index:2;
+  top:31.4453cqh;
+  left:86.6667cqw;
+  margin:0;
+  color:#fff7f7;
+  font:700 min(1.3889cqw,1.9531cqh)/1.1 DMSans,Arial,sans-serif;
+  text-align:center;
+  white-space:nowrap;
+  opacity:0;
+  transform:translate(-50%,.45rem);
+  transition:opacity .6s ease,transform .72s cubic-bezier(.16,1,.3,1);
+  transition-delay:.32s;
+}
+.figma-edition .figma-scene.is-active .figma-team__label{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+.figma-edition .figma-team__grid{
+  position:absolute;
+  z-index:2;
+  top:40.5273cqh;
+  left:51.8056cqw;
+  display:grid;
+  width:46.9444cqw;
+  height:46.0938cqh;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+  column-gap:1.5972cqw;
+  row-gap:4.4922cqh;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+.figma-edition .figma-team__member{
+  display:flex;
+  min-width:0;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:.8789cqh;
+  opacity:0;
+  transform:translate3d(0,1rem,0) scale(.96);
+  transition:opacity .52s ease,transform .72s cubic-bezier(.16,1,.3,1);
+  transition-delay:calc(var(--member-index,0)*85ms + 360ms);
+}
+.figma-edition .figma-scene.is-active .figma-team__member{
+  opacity:1;
+  transform:translate3d(0,0,0) scale(1);
+}
+.figma-edition .figma-team__portrait{
+  position:relative;
+  display:block;
+  flex:none;
+  width:min(11.8056cqw,16.6016cqh);
+  aspect-ratio:1;
+  overflow:visible;
+  border:0;
+  border-radius:50%;
+  padding:0;
+  background:transparent;
+  cursor:zoom-in;
+}
+.figma-edition .figma-team__portrait img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  transition:transform .5s cubic-bezier(.16,1,.3,1),filter .5s ease;
+}
+.figma-edition .figma-team__portrait:hover img,
+.figma-edition .figma-team__portrait:focus-visible img{
+  transform:scale(1.06);
+  filter:drop-shadow(0 .65rem .85rem rgba(27,4,4,.38));
+}
+.figma-edition .figma-team__portrait::after{
+  position:absolute;
+  right:3%;
+  bottom:3%;
+  display:grid;
+  width:20%;
+  aspect-ratio:1;
+  place-items:center;
+  border:1px solid rgba(185,236,255,.76);
+  border-radius:50%;
+  background:rgba(57,10,10,.94);
+  color:#b9ecff;
+  content:"+";
+  font:500 min(1.1cqw,1.55cqh)/1 JosefinSans,sans-serif;
+  opacity:0;
+  transform:scale(.72);
+  transition:opacity .25s ease,transform .3s cubic-bezier(.16,1,.3,1);
+}
+.figma-edition .figma-team__portrait:hover::after,
+.figma-edition .figma-team__portrait:focus-visible::after{
+  opacity:1;
+  transform:scale(1);
+}
+.figma-edition .figma-team__portrait:focus-visible{outline:2px solid #b9ecff;outline-offset:3px}
+.figma-edition .figma-team__member span{
+  color:#fff7f7;
+  font:300 min(1.7361cqw,2.4414cqh)/1.15 DMSans,Arial,sans-serif;
+  text-align:center;
+  white-space:nowrap;
+}
+.figma-edition .figma-team__credit{
+  position:absolute;
+  z-index:2;
+  top:90.0391cqh;
+  left:4.375cqw;
+  margin:0;
+  color:#d1b8b8;
+  font:400 min(1.3889cqw,1.9531cqh)/1 JosefinSans,sans-serif;
+  white-space:nowrap;
+  opacity:0;
+  transform:translateY(.45rem);
+  transition:opacity .6s ease,transform .72s cubic-bezier(.16,1,.3,1);
+  transition-delay:.22s;
+}
+.figma-edition .figma-scene.is-active .figma-team__credit{opacity:1;transform:translateY(0)}
+@keyframes team-water-drift{
+  0%{transform:scale(1.025) rotate(180deg) translate3d(-.5%,.2%,0)}
+  100%{transform:scale(1.09) rotate(181.2deg) translate3d(1.3%,-.8%,0)}
+}
+@keyframes water-caustics{
+  0%{transform:translate3d(-3%,1%,0) scale(.95) rotate(-4deg);opacity:.45}
+  100%{transform:translate3d(4%,-2%,0) scale(1.08) rotate(5deg);opacity:.82}
+}
+@keyframes water-sheen{
+  0%{transform:translate3d(-5%,2%,0) rotate(-5deg) scale(1.06)}
+  100%{transform:translate3d(5%,-2%,0) rotate(4deg) scale(1.14)}
+}
+@media(max-aspect-ratio:1/1){
+  .figma-edition .figma-team__water{inset:22svh 0 0}
+  .figma-edition .figma-team__left-panel{width:100%;height:39.5svh}
+  .figma-edition .figma-team__landscape{top:0;left:0;width:100%;height:22svh;transform:scale(1.045)}
+  .figma-edition .figma-team__water img{inset:-6%;width:112%;height:112%}
+  .figma-edition .figma-team__image-shade{width:100%;height:22svh;background:linear-gradient(100deg,rgba(12,20,19,.56),rgba(12,20,19,.18) 84%),linear-gradient(0deg,#661414 0%,rgba(102,20,20,.38) 10%,transparent 45%)}
+  .figma-edition .figma-team__title{top:3.5svh;left:5vw;width:82vw;font-size:clamp(1.35rem,5.6vw,2rem);line-height:1.02}
+  .figma-edition .figma-team__question{top:42svh;right:auto;left:5vw;width:90vw;font-size:clamp(.95rem,4.8vw,1.22rem);line-height:1.2;text-align:center}
+  .figma-edition .figma-team__label{top:52svh;left:50%;font-size:.86rem}
+  .figma-edition .figma-team__grid{top:58svh;left:4vw;width:92vw;height:33svh;column-gap:.45rem;row-gap:1svh}
+  .figma-edition .figma-team__member{gap:.35rem}
+  .figma-edition .figma-team__portrait{width:min(18vw,9svh)}
+  .figma-edition .figma-team__portrait::after{font-size:.75rem}
+  .figma-edition .figma-team__member span{font-size:clamp(.58rem,2.85vw,.72rem);line-height:1.1;white-space:normal}
+  .figma-edition .figma-team__credit{top:34.2svh;left:5vw;font-size:.58rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .figma-edition .figma-team__water img,
+  .figma-edition .figma-team__water::before,
+  .figma-edition .figma-team__water::after{animation:none}
+  .figma-edition .figma-team__landscape,
+  .figma-edition .figma-team__title,
+  .figma-edition .figma-team__question,
+  .figma-edition .figma-team__label,
+  .figma-edition .figma-team__member,
+  .figma-edition .figma-team__credit{transition:none!important;opacity:1;transform:none}
+}
