@@ -2596,10 +2596,32 @@ html.figma-edition,body.figma-edition{background:#292929}
 .figma-edition .figma-scene.is-leaving.turn-middle.leave-previous .figma-page-zoom>.figma-frame:not(.figma-turn-leaf){clip-path:inset(0 0 0 50%)!important}
 .figma-edition .figma-scene.is-leaving.turn-middle .figma-page-zoom>.figma-turn-leaf{
   z-index:5;overflow:visible!important;transform-origin:50% 50%!important;
-  transform-style:preserve-3d!important;backface-visibility:visible!important;
+  transform-style:preserve-3d!important;backface-visibility:visible!important;background:transparent!important;
   box-shadow:0 1rem 2rem rgb(25 5 5 / 27%),0 2px 0 rgb(255 255 255 / 72%);
   will-change:transform,clip-path,opacity
 }
+.figma-edition .figma-scene.is-leaving.turn-middle .figma-turn-leaf>:not(.figma-turn-back){
+  backface-visibility:hidden!important;translate:0 0 1px
+}
+.figma-edition .figma-scene.is-leaving.turn-middle .figma-turn-back{
+  position:absolute;z-index:10;inset:0;overflow:hidden;pointer-events:none;
+  transform:rotateY(180deg) translateZ(2px);transform-origin:50% 50%;
+  transform-style:flat;backface-visibility:hidden;opacity:1;clip-path:none!important;
+  background:linear-gradient(110deg,#fff7f5 0%,#f8efec 48%,#efe2dd 100%);
+  border:1px solid rgb(105 71 59 / 17%);
+  box-shadow:inset 0 0 1.2rem rgb(57 10 10 / 10%),inset 0 0 0 1px rgb(255 255 255 / 45%);
+  will-change:transform
+}
+.figma-edition .figma-scene.is-leaving.turn-middle .figma-turn-back__art{
+  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+  max-width:none!important;max-height:none!important;aspect-ratio:auto!important;margin:0!important;
+  scale:none!important;transform:none!important;box-shadow:none!important;
+  background:transparent!important
+}
+.figma-edition .figma-scene.is-leaving.turn-middle .figma-turn-back__art::before{display:none!important}
+.figma-edition .figma-scene.is-leaving.turn-middle.leave-next .figma-turn-back--next .figma-turn-back__art{clip-path:inset(0 50% 0 0)!important}
+.figma-edition .figma-scene.is-leaving.turn-middle.leave-previous .figma-turn-back--previous .figma-turn-back__art{clip-path:inset(0 0 0 50%)!important}
+.figma-edition .figma-scene.is-leaving.turn-middle .figma-turn-leaf::after{display:none!important}
 .figma-edition .figma-scene.is-leaving.turn-middle.leave-next .figma-turn-leaf{
   clip-path:inset(0 0 0 50%);animation:magazine-middle-fold-next 1.04s cubic-bezier(.48,.02,.18,1) both
 }
@@ -2619,28 +2641,103 @@ html.figma-edition,body.figma-edition{background:#292929}
   animation:magazine-water-glint 1.08s cubic-bezier(.46,.02,.18,1) both
 }
 .figma-edition .figma-scene.is-leaving.turn-middle .figma-turn-leaf::after{
-  z-index:1;transform:rotateY(180deg) translateZ(1px);backface-visibility:hidden;
+  z-index:10;transform:rotateY(180deg) translateZ(2px);backface-visibility:hidden;
   border:1px solid rgb(105 71 59 / 17%);
-  background:repeating-linear-gradient(0deg,rgb(88 53 41 / 2%) 0 1px,transparent 1px 4px),linear-gradient(90deg,#e7d9d1 0%,#fffaf5 18%,#f3e9e2 50%,#d4c3b9 100%);
-  box-shadow:inset 0 0 2rem rgb(57 10 10 / 14%),inset 0 0 0 1px rgb(255 255 255 / 60%)
+  background:linear-gradient(110deg,#fff7f5 0%,#f8efec 48%,#efe2dd 100%);
+  box-shadow:inset 0 0 2rem rgb(57 10 10 / 10%),inset 0 0 0 1px rgb(255 255 255 / 70%)
 }
 @keyframes magazine-middle-fold-next{
   0%{opacity:1;transform:translateZ(0) rotateY(0);clip-path:inset(0 0 0 50%)}
   16%{transform:translateZ(34px) rotateY(-13deg);clip-path:inset(0 0 0 50%)}
   48%{transform:translateZ(82px) rotateY(-83deg);clip-path:inset(0 0 0 50%)}
-  78%{transform:translateZ(48px) rotateY(-148deg);clip-path:inset(0 0 0 50%)}
-  94%{opacity:1;transform:translateZ(18px) rotateY(-174deg);clip-path:inset(0 0 0 50%)}
+  76%{transform:translateZ(42px) rotateY(-150deg);clip-path:inset(0 0 0 50%)}
+  84%{opacity:1;transform:translateZ(18px) rotateY(-180deg);clip-path:inset(0 0 0 50%)}
+  96%{opacity:1;transform:translateZ(0) rotateY(-180deg);clip-path:inset(0 0 0 50%)}
   100%{opacity:0;transform:translateZ(0) rotateY(-180deg);clip-path:inset(0 0 0 50%);box-shadow:none}
 }
 @keyframes magazine-middle-fold-previous{
   0%{opacity:1;transform:translateZ(0) rotateY(0);clip-path:inset(0 50% 0 0)}
   16%{transform:translateZ(34px) rotateY(13deg);clip-path:inset(0 50% 0 0)}
   48%{transform:translateZ(82px) rotateY(83deg);clip-path:inset(0 50% 0 0)}
-  78%{transform:translateZ(48px) rotateY(148deg);clip-path:inset(0 50% 0 0)}
-  94%{opacity:1;transform:translateZ(18px) rotateY(174deg);clip-path:inset(0 50% 0 0)}
+  76%{transform:translateZ(42px) rotateY(150deg);clip-path:inset(0 50% 0 0)}
+  84%{opacity:1;transform:translateZ(18px) rotateY(180deg);clip-path:inset(0 50% 0 0)}
+  96%{opacity:1;transform:translateZ(0) rotateY(180deg);clip-path:inset(0 50% 0 0)}
   100%{opacity:0;transform:translateZ(0) rotateY(180deg);clip-path:inset(0 50% 0 0);box-shadow:none}
 }
 @media(prefers-reduced-motion:reduce){
-  .figma-edition .figma-turn-leaf{display:none!important}
+  .figma-edition .figma-turn-leaf,.figma-edition .figma-turn-back{display:none!important}
   .figma-edition .figma-scene.is-leaving.turn-middle .figma-page-zoom>.figma-frame:not(.figma-turn-leaf){clip-path:none!important}
 }
+
+/* Raster spreads use a real half-width leaf. Keeping it free of clip-path
+   preserves the 3D back face; object-position chooses the exact half of each spread. */
+.figma-edition .figma-scene.is-leaving.turn-middle .figma-turn-leaf--raster{
+  width:calc(var(--page-width)*.5)!important;left:50%!important;clip-path:none!important;
+  isolation:auto!important;transform-origin:0% 50%!important;will-change:transform,opacity
+}
+.figma-edition .figma-scene.is-leaving.turn-middle.leave-previous .figma-turn-leaf--raster{
+  left:0!important;transform-origin:100% 50%!important
+}
+.figma-edition .figma-scene.is-leaving.turn-middle.leave-next .figma-turn-leaf--raster>.figma-export{object-fit:cover!important;object-position:right center!important}
+.figma-edition .figma-scene.is-leaving.turn-middle.leave-previous .figma-turn-leaf--raster>.figma-export{object-fit:cover!important;object-position:left center!important}
+.figma-edition .figma-scene.is-leaving.turn-middle .figma-turn-back__art .figma-export{object-fit:cover!important}
+.figma-edition .figma-scene.is-leaving.turn-middle.leave-next .figma-turn-leaf--raster .figma-turn-back--next .figma-turn-back__art{clip-path:none!important}
+.figma-edition .figma-scene.is-leaving.turn-middle.leave-previous .figma-turn-leaf--raster .figma-turn-back--previous .figma-turn-back__art{clip-path:none!important}
+.figma-edition .figma-scene.is-leaving.turn-middle.leave-next .figma-turn-back--next .figma-turn-back__art .figma-export{object-position:left center!important}
+.figma-edition .figma-scene.is-leaving.turn-middle.leave-previous .figma-turn-back--previous .figma-turn-back__art .figma-export{object-position:right center!important}
+.figma-edition .figma-scene.is-leaving.turn-middle.leave-next .figma-turn-leaf--raster{animation:magazine-middle-fold-next-raster 1.04s cubic-bezier(.48,.02,.18,1) both}
+.figma-edition .figma-scene.is-leaving.turn-middle.leave-previous .figma-turn-leaf--raster{animation:magazine-middle-fold-previous-raster 1.04s cubic-bezier(.48,.02,.18,1) both}
+.figma-edition .figma-scene.is-leaving.turn-middle .figma-turn-leaf--raster>.figma-export{animation:magazine-middle-front-hide 1.04s linear both}
+@keyframes magazine-middle-fold-next-raster{
+  0%{opacity:1;transform:translateZ(0) rotateY(0)}
+  16%{transform:translateZ(34px) rotateY(-13deg)}
+  48%{transform:translateZ(82px) rotateY(-83deg)}
+  76%{transform:translateZ(42px) rotateY(-150deg)}
+  84%{opacity:1;transform:translateZ(18px) rotateY(-180deg)}
+  96%{opacity:1;transform:translateZ(0) rotateY(-180deg)}
+  100%{opacity:0;transform:translateZ(0) rotateY(-180deg);box-shadow:none}
+}
+@keyframes magazine-middle-fold-previous-raster{
+  0%{opacity:1;transform:translateZ(0) rotateY(0)}
+  16%{transform:translateZ(34px) rotateY(13deg)}
+  48%{transform:translateZ(82px) rotateY(83deg)}
+  76%{transform:translateZ(42px) rotateY(150deg)}
+  84%{opacity:1;transform:translateZ(18px) rotateY(180deg)}
+  96%{opacity:1;transform:translateZ(0) rotateY(180deg)}
+  100%{opacity:0;transform:translateZ(0) rotateY(180deg);box-shadow:none}
+}
+@keyframes magazine-middle-front-hide{
+  0%,30%{opacity:1}
+  50%,100%{opacity:0}
+}
+.figma-edition .figma-scene.is-leaving.turn-middle .figma-turn-back--raster{
+  transform:translateZ(-1px)!important;backface-visibility:visible!important;opacity:0;
+  animation:magazine-middle-back-reveal 1.04s linear both
+}
+.figma-edition .figma-scene.is-leaving.turn-middle .figma-turn-back--raster .figma-turn-back__art{transform:scaleX(-1)!important;transform-origin:50% 50%!important}
+@keyframes magazine-middle-back-reveal{
+  0%,44%{opacity:0}
+  54%,96%{opacity:1}
+  100%{opacity:0}
+}
+
+/* Abertura da edição: uma lâmina de água atravessa a capa e revela a leitura. */
+.figma-edition .cover-water-transition{position:fixed;inset:0;z-index:20;overflow:hidden;pointer-events:none;contain:strict}
+.figma-edition .cover-water-wave{position:absolute;top:100%;left:-40%;width:180%;height:220%;will-change:transform;animation:idibi-opening-wave 1.8s cubic-bezier(.45,.05,.22,1) both}
+.figma-edition .cover-water-wave--mist{opacity:.5;animation-delay:-.08s}
+.figma-edition .cover-water-wave--foam{animation-delay:.07s;mix-blend-mode:screen}
+.figma-edition .cover-water-caustics{position:absolute;inset:-20%;opacity:0;background:repeating-radial-gradient(ellipse at 30% 75%,transparent 0 7%,rgb(255 255 255 / 45%) 7.2% 7.5%,transparent 8% 14%);mix-blend-mode:soft-light;animation:idibi-opening-caustics 1.8s ease both}
+.figma-edition .figma-scene.is-leaving.cover-water-out{z-index:4;animation:idibi-opening-cover 1.8s ease both}
+.figma-edition .figma-scene.is-leaving.cover-water-out .figma-page-zoom,
+.figma-edition .figma-scene.is-leaving.cover-water-out .figma-frame{animation:none!important;transform:none!important;filter:none!important;clip-path:none!important}
+.figma-edition .figma-scene.is-leaving.cover-water-out .figma-page-zoom::before,
+.figma-edition .figma-scene.is-leaving.cover-water-out .figma-page-zoom::after,
+.figma-edition .figma-scene.is-leaving.cover-water-out .figma-frame::before,
+.figma-edition .figma-scene.is-leaving.cover-water-out .figma-frame::after{display:none!important}
+.figma-edition .figma-scene.is-active.cover-water-in .figma-page-zoom{animation:idibi-opening-reveal 1.8s cubic-bezier(.22,1,.36,1) both!important}
+.figma-edition .figma-scene.is-active.cover-water-in .figma-frame{animation:none!important;filter:none!important;transform:none!important}
+@keyframes idibi-opening-wave{0%{transform:translate3d(-3%,0,0) rotate(-3deg)}100%{transform:translate3d(3%,-160%,0) rotate(3deg)}}
+@keyframes idibi-opening-cover{0%,30%{opacity:1}48%,100%{opacity:0}}
+@keyframes idibi-opening-reveal{0%,38%{opacity:0;transform:translate3d(0,22px,0) scale(1.035)}64%{opacity:1}100%{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+@keyframes idibi-opening-caustics{0%,20%{opacity:0;transform:scale(.8) rotate(-12deg)}45%{opacity:.55}100%{opacity:0;transform:scale(1.25) rotate(8deg)}}
+@media(prefers-reduced-motion:reduce){.cover-water-transition{display:none!important}}

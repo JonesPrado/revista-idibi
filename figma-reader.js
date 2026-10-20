@@ -372,15 +372,21 @@
         replayChartMotion(index);
         const outgoing = scenes[activeScene];
         const incoming = scenes[index];
-        const waterTurn = motionAllowed && waterTurnPages.has(incoming.id);
-        const middleTurn = motionAllowed && createTurningHalf(outgoing);
         window.clearTimeout(transitionTimer);
+        magazine.querySelector('.cover-water-transition')?.remove();
+        scenes.forEach((scene) => scene.classList.remove('cover-water-out', 'cover-water-in'));
         scenes.forEach((scene) => {
           if (scene !== outgoing && scene !== incoming) {
-            scene.querySelector('.figma-turn-leaf')?.remove();
+            scene.querySelectorAll('.figma-turn-leaf, .figma-turn-back').forEach((element) => element.remove());
             scene.classList.remove('is-active', 'is-leaving', 'leave-next', 'leave-previous', 'is-entering', 'enter-next', 'enter-previous', 'is-turned-next', 'is-turned-previous', 'turn-water', 'turn-middle');
           }
         });
+        // A page can be revisited before its previous turn cleanup timer fires.
+        // Remove its old turned leaf before cloning it as the incoming page's back.
+        incoming.querySelectorAll('.figma-turn-leaf, .figma-turn-back').forEach((element) => element.remove());
+        const coverWater = motionAllowed && outgoing.id === 'capa' && direction === 'next';
+        const waterTurn = motionAllowed && !coverWater && waterTurnPages.has(incoming.id);
+        const middleTurn = motionAllowed && !coverWater && createTurningHalf(outgoing, incoming, direction);
         outgoing.classList.remove('enter-next', 'enter-previous', 'is-entering');
         outgoing.classList.remove('turn-water', 'turn-middle');
         outgoing.classList.add('is-leaving', `leave-${direction}`);
@@ -390,6 +396,17 @@
         incoming.classList.remove('is-leaving', 'leave-next', 'leave-previous', 'is-turned-next', 'is-turned-previous', 'turn-water', 'turn-middle');
         incoming.classList.add('is-active', 'is-entering', `enter-${direction}`);
         incoming.setAttribute('aria-hidden', 'false');
+        if (coverWater) {
+          outgoing.classList.add('cover-water-out');
+          incoming.classList.add('cover-water-in');
+          const wash = document.createElement('div');
+          wash.className = 'cover-water-transition';
+          wash.setAttribute('aria-hidden', 'true');
+          wash.innerHTML = '<svg class="cover-water-wave cover-water-wave--mist" viewBox="0 0 1600 1200" preserveAspectRatio="none"><path fill="#b9ecff" d="M0 100 C240 -80 410 200 720 80 S1210 -80 1600 100 V1200 H0Z"/></svg>' +
+            '<svg class="cover-water-wave cover-water-wave--body" viewBox="0 0 1600 1200" preserveAspectRatio="none"><defs><linearGradient id="idibi-opening-water" x1="0" y1="0" x2=".3" y2="1"><stop stop-color="#e4f8ff"/><stop offset=".16" stop-color="#b9ecff"/><stop offset=".6" stop-color="#64c1d5"/><stop offset="1" stop-color="#176779"/></linearGradient></defs><path fill="url(#idibi-opening-water)" d="M0 115 C300 230 360 -80 760 85 S1250 230 1600 60 V1200 H0Z"/><path fill="none" stroke="#fff2f2" stroke-opacity=".7" stroke-width="2" d="M0 115 C300 230 360 -80 760 85 S1250 230 1600 60"/></svg>' +
+            '<svg class="cover-water-wave cover-water-wave--foam" viewBox="0 0 1600 1200" preserveAspectRatio="none"><path fill="#e5f8ff" fill-opacity=".3" d="M0 130 C340 -50 470 200 850 75 S1360 -40 1600 150 V1200 H0Z"/></svg><div class="cover-water-caustics"></div>';
+          magazine.append(wash);
+        }
         activeScene = index;
         ensureSceneImage(index - 1);
         ensureSceneImage(index + 1);
@@ -397,10 +414,14 @@
         transitionTimer = window.setTimeout(() => {
           outgoing.classList.add(`is-turned-${direction}`);
           outgoing.querySelector('.figma-turn-leaf')?.remove();
+          outgoing.querySelector('.figma-turn-back')?.remove();
           outgoing.classList.remove('is-active', 'is-leaving', 'leave-next', 'leave-previous', 'turn-water', 'turn-middle');
           incoming.classList.remove('is-entering', 'enter-next', 'enter-previous');
+          outgoing.classList.remove('cover-water-out');
+          incoming.classList.remove('cover-water-in');
+          magazine.querySelector('.cover-water-transition')?.remove();
           outgoing.querySelector('iframe[data-video-src]')?.removeAttribute('src');
-        }, motionAllowed ? (waterTurn ? 1160 : 1040) : 0);
+        }, motionAllowed ? (coverWater ? 1800 : waterTurn ? 1160 : 1040) : 0);
       };
 
       const goToSlot = (slot) => {
@@ -420,16 +441,40 @@
         goToSlot(slots[0]);
       };
 
-      const createTurningHalf = (scene) => {
+      const createTurningHalf = (scene, nextScene, direction) => {
         const frame = scene.querySelector('.figma-page-zoom > .figma-frame');
+        const nextFrame = nextScene.querySelector('.figma-page-zoom > .figma-frame');
         if (!frame || frame.querySelector('iframe')) return false;
         frame.parentElement.querySelector('.figma-turn-leaf')?.remove();
+        frame.parentElement.querySelector('.figma-turn-back')?.remove();
         const leaf = frame.cloneNode(true);
         leaf.classList.add('figma-turn-leaf');
+        const rasterLeaf = Boolean(frame.querySelector(':scope > .figma-export'));
+        if (rasterLeaf) {
+          leaf.classList.add('figma-turn-leaf--raster');
+          leaf.style.setProperty('width', 'calc(var(--page-width)*.5)', 'important');
+          leaf.style.setProperty('left', direction === 'next' ? '50%' : '0%', 'important');
+          leaf.style.setProperty('clip-path', 'none', 'important');
+          leaf.style.setProperty('isolation', 'auto', 'important');
+          leaf.style.setProperty('transform-origin', direction === 'next' ? '0% 50%' : '100% 50%', 'important');
+        }
         leaf.setAttribute('aria-hidden', 'true');
         leaf.inert = true;
         leaf.querySelectorAll('[id]').forEach((element) => element.removeAttribute('id'));
         leaf.querySelectorAll('button,a,input,select,textarea,[tabindex]').forEach((element) => element.setAttribute('tabindex', '-1'));
+        const back = document.createElement('div');
+        back.className = `figma-turn-back figma-turn-back--${direction}${rasterLeaf ? ' figma-turn-back--raster' : ''}`;
+        back.setAttribute('aria-hidden', 'true');
+        back.inert = true;
+        if (nextFrame) {
+          const backArt = nextFrame.cloneNode(true);
+          backArt.classList.add('figma-turn-back__art');
+          backArt.setAttribute('aria-hidden', 'true');
+          backArt.querySelectorAll('[id]').forEach((element) => element.removeAttribute('id'));
+          backArt.querySelectorAll('iframe').forEach((element) => element.remove());
+          back.append(backArt);
+        }
+        leaf.append(back);
         frame.parentElement.append(leaf);
         return true;
       };
