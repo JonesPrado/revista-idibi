@@ -7,8 +7,6 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--ink)}
 body{min-width:320px;color:var(--paper);font:300 1rem/1.5 DMSans,Arial,sans-serif;-webkit-font-smoothing:antialiased}
 button,a,input{font:inherit;color:inherit}button{cursor:pointer}a{text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--ice);outline-offset:3px}
 .topbar{position:fixed;z-index:20;inset:0 0 auto;height:3rem;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;color:var(--paper)}
-.brand{display:flex;align-items:center;gap:.38rem;color:var(--ice);font:500 .98rem/1 JosefinSans,sans-serif;letter-spacing:-.04em;text-shadow:0 1px 15px rgba(0,0,0,.35)}
-.brand img{width:1.8rem;height:1.18rem;object-fit:contain}
 .reader-location{position:absolute;left:50%;transform:translateX(-50%);font:500 .7rem/1 JosefinSans,sans-serif;letter-spacing:.08em}
 .index-trigger{position:absolute;top:.64rem;right:2.5rem;display:flex;align-items:center;gap:.5rem;border:1px solid rgba(185,236,255,.36);border-radius:2rem;padding:.48rem .72rem;background:rgba(57,10,10,.54);color:var(--paper);font:500 .72rem/1 JosefinSans,sans-serif;letter-spacing:.1em;text-transform:uppercase;transition:background .25s,color .25s}
 .index-trigger:hover{background:rgba(57,10,10,.9);color:var(--ice)}
@@ -42,6 +40,10 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
 .figma-edition .figma-scene.is-leaving .figma-frame{overflow:visible;transform-style:preserve-3d;backface-visibility:visible;will-change:transform,filter;}
 .figma-edition .figma-scene.is-leaving.leave-next .figma-frame{transform-origin:0% 50%;animation:magazine-turn-next 1.08s cubic-bezier(.64,0,.22,1) both;}
 .figma-edition .figma-scene.is-leaving.leave-previous .figma-frame{transform-origin:100% 50%;animation:magazine-turn-previous 1.08s cubic-bezier(.64,0,.22,1) both;}
+.figma-edition .figma-scene.is-active.enter-next:not(.is-entering) .figma-frame{animation:magazine-page-enter-next .7s cubic-bezier(.16,1,.3,1) both}
+.figma-edition .figma-scene.is-active.enter-previous:not(.is-entering) .figma-frame{animation:magazine-page-enter-previous .7s cubic-bezier(.16,1,.3,1) both}
+@keyframes magazine-page-enter-next{from{opacity:.68;transform:translate3d(2.2%,0,-42px) scale(.985);filter:brightness(.86)}to{opacity:1;transform:translate3d(0,0,0) scale(1);filter:brightness(1)}}
+@keyframes magazine-page-enter-previous{from{opacity:.68;transform:translate3d(-2.2%,0,-42px) scale(.985);filter:brightness(.86)}to{opacity:1;transform:translate3d(0,0,0) scale(1);filter:brightness(1)}}
 .figma-edition .figma-scene.is-leaving .figma-frame::before,.figma-edition .figma-scene.is-leaving .figma-frame::after{position:absolute;inset:0;pointer-events:none;content:"";}
 .figma-edition .figma-scene.is-leaving .figma-frame::before{z-index:10;background:linear-gradient(90deg,transparent 0%,rgba(36,5,5,.12) 18%,rgba(24,3,3,.46) 47%,rgba(255,242,242,.48) 53%,rgba(24,3,3,.22) 66%,transparent 100%) no-repeat;background-size:14% 100%;opacity:.8;}
 .figma-edition .figma-scene.is-leaving.leave-next .figma-frame::before{background-position:100% 0;animation:magazine-fold-next 1.08s cubic-bezier(.64,0,.22,1) both;}
@@ -56,8 +58,6 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
 .figma-edition .figma-export{display:block;width:100%;height:100%;object-fit:contain;object-position:center;user-select:none;-webkit-user-drag:none;pointer-events:none}
 .figma-edition .topbar{height:3rem;padding:0;background:transparent;border:0;pointer-events:none}
 .figma-edition .topbar>*{pointer-events:auto}
-.figma-edition .brand{position:absolute;top:.78rem;left:clamp(.75rem,calc((100vw - min(100vw,calc((100svh - 7rem)*1.40625)))/2 - 7rem),3rem);gap:.38rem;color:var(--ice);font-size:.98rem;text-shadow:0 1px 15px rgba(0,0,0,.35)}
-.figma-edition .brand img{width:1.8rem;height:1.18rem;object-fit:contain}
 .figma-edition .reader-location{display:none}
 .figma-edition .index-trigger{position:absolute;top:.64rem;right:clamp(.75rem,calc((100vw - min(100vw,calc((100svh - 7rem)*1.40625)))/2 - 7rem),3rem);gap:.5rem;border:1px solid rgba(185,236,255,.36);border-radius:2rem;padding:.48rem .72rem;background:rgba(57,10,10,.54);backdrop-filter:blur(8px);letter-spacing:.1em}
 .figma-edition .index-trigger:hover{background:rgba(57,10,10,.9)}
@@ -77,7 +77,6 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
 .figma-edition .lightbox p{margin:.65rem auto 0;text-align:center}
 @media(max-width:700px){
   .figma-edition .figma-frame{width:min(calc(100vw - .5rem),calc((100svh - 6.7rem)*1.40625));max-height:calc(100svh - 6.7rem)}
-  .figma-edition .brand{left:.8rem;top:.7rem}
   .figma-edition .index-trigger{right:.8rem;top:.55rem;padding:.43rem .64rem;font-size:.62rem}
   .figma-edition .reader-controls{bottom:.55rem;gap:.16rem;padding:.23rem}
   .figma-edition .reader-controls button{width:1.75rem;height:1.75rem;font-size:.85rem}
@@ -135,10 +134,10 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
 .figma-edition .garimpo-one__hero{
   position:absolute;
   z-index:1;
-  top:-6.05cqh;
-  left:-7.25cqw;
-  width:52.125cqw;
-  height:45.1cqh;
+  top:0;
+  left:0;
+  width:50cqw;
+  height:39.1cqh;
   margin:0;
   overflow:hidden;
   background:#334a34;
@@ -165,10 +164,10 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
 .figma-edition .garimpo-one__portrait{
   position:absolute;
   z-index:2;
-  top:43.85cqh;
-  left:60.4cqw;
-  width:35.4cqw;
-  height:56.15cqh;
+  top:46.3cqh;
+  left:67.9cqw;
+  width:32.1cqw;
+  height:53.7cqh;
   margin:0;
   overflow:hidden;
   pointer-events:none;
@@ -188,8 +187,8 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   position:absolute;
   z-index:3;
   top:9cqh;
-  left:19cqw;
-  width:23.625cqw;
+  left:21.1cqw;
+  width:26.25cqw;
   height:39.75cqh;
   padding:3cqh 2.1cqw;
   display:flex;
@@ -254,8 +253,8 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   position:absolute;
   z-index:3;
   top:51.3cqh;
-  left:22.06cqw;
-  width:20.56cqw;
+  left:24.5cqw;
+  width:22.85cqw;
   height:48.7cqh;
   padding:6.7cqh 1.65cqw 2cqh;
   overflow:hidden;
@@ -276,7 +275,7 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   position:absolute;
   z-index:2;
   top:8.4cqh;
-  left:47.25cqw;
+  left:52.5cqw;
   width:40cqw;
   margin:0;
   color:#390a0a;
@@ -287,8 +286,8 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   position:absolute;
   z-index:2;
   top:22.75cqh;
-  left:47.6cqw;
-  width:15.75cqw;
+  left:52.9cqw;
+  width:17.3cqw;
   margin:0;
   color:#1b0404;
   font:300 min(1.25cqw,1.95cqh)/1.3 DMSans,Arial,sans-serif;
@@ -298,7 +297,7 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   position:absolute;
   z-index:3;
   top:13.9cqh;
-  left:63.1cqw;
+  left:70.5cqw;
   color:#000;
   font:400 min(8cqw,12.5cqh)/.8 DMSans,Arial,sans-serif;
 }
@@ -306,7 +305,7 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   position:absolute;
   z-index:3;
   top:17.8cqh;
-  left:66.25cqw;
+  left:73.4cqw;
   width:23.7cqw;
   margin:0;
   color:#1b0404;
@@ -316,7 +315,7 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
 .figma-edition .garimpo-one__summary{
   position:absolute;
   z-index:3;
-  left:44.75cqw;
+  left:50cqw;
   bottom:0;
   width:23.625cqw;
   height:22.5cqh;
@@ -363,11 +362,6 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
 .figma-edition .figma-scene.is-active .garimpo-one__body{animation:garimpo-copy-arrive .85s .22s both}
 .figma-edition .figma-scene.is-active .garimpo-one__quote{animation:garimpo-copy-arrive .85s .3s both}
 .figma-edition .figma-scene.is-active .garimpo-one__summary{animation:garimpo-copy-arrive .9s .36s both}
-.figma-edition:has(#garimpo-1.is-active) .brand{visibility:hidden}
-.figma-edition:has(#garimpo-1.is-active) .reader-controls{
-  top:.72rem;
-  bottom:auto;
-}
 @keyframes garimpo-copy-arrive{
   from{opacity:0;transform:translate3d(0,1rem,0)}
   to{opacity:1;transform:translate3d(0,0,0)}
@@ -741,8 +735,6 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
 @keyframes garimpo-bar-grow{to{transform:scaleX(1)}}
 @keyframes garimpo-dot-arrive{to{opacity:1;transform:scale(1)}}
 @keyframes garimpo-two-water{from{transform:rotate(180deg) scale(1.06)}to{transform:rotate(180deg) scale(1.14) translate3d(1%,-.7%,0)}}
-.figma-edition:has(#garimpo-2.is-active) .brand{visibility:hidden}
-.figma-edition:has(#garimpo-2.is-active) .reader-controls{top:.72rem;bottom:auto}
 @media(prefers-reduced-motion:reduce){
   .figma-edition .garimpo-two__water img,
   .figma-edition .garimpo-two__hero img,
@@ -1141,7 +1133,6 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   background:var(--paper);
   box-shadow:none;
 }
-.figma-edition:has(#esgoto.is-active) .brand{visibility:hidden}
 .figma-edition .figma-esgoto__water{
   position:absolute;
   z-index:0;
@@ -1253,7 +1244,7 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   text-align:justify;
   text-justify:inter-word;
   text-wrap:pretty;
-  hyphens:auto;
+  hyphens:none;
 }
 .figma-edition .figma-esgoto__middle--lead{
   top:26.33cqh;
@@ -1305,8 +1296,8 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   height:100%;
   object-fit:contain;
   object-position:center top;
-  opacity:.42;
-  filter:saturate(.82) brightness(1.04);
+  opacity:1;
+  filter:none;
 }
 .figma-edition .figma-esgoto__right{
   position:absolute;
@@ -1318,7 +1309,7 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   text-align:justify;
   text-justify:inter-word;
   text-wrap:pretty;
-  hyphens:auto;
+  hyphens:none;
 }
 .figma-edition .figma-esgoto__right--first{top:6.25cqh;left:52.01cqw}
 .figma-edition .figma-esgoto__right--second{top:26.37cqh;left:52.01cqw}
@@ -1336,6 +1327,31 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   white-space:nowrap;
 }
 .figma-edition .figma-esgoto__folio span{padding:0 .18em;color:var(--wine)}
+/* O miolo direito segue a largura da prancha 1440 × 1024 em telas largas;
+   o fundo continua a cobrir o viewport. */
+@media(min-aspect-ratio:45/32){
+  .figma-edition .figma-esgoto__right{
+    width:min(17.5cqw,24.61cqh);
+  }
+  .figma-edition .figma-esgoto__right--first,
+  .figma-edition .figma-esgoto__right--second,
+  .figma-edition .figma-esgoto__right--third{
+    left:calc(50% + min(2.01cqw,2.83cqh));
+  }
+  .figma-edition .figma-esgoto__right--fourth{
+    left:calc(50% + min(27.15cqw,38.18cqh));
+  }
+  .figma-edition .figma-esgoto__map{
+    left:calc(50% + min(4.93cqw,6.93cqh));
+    width:min(50.28cqw,70.71cqh);
+  }
+  .figma-edition .figma-esgoto__map-credit{
+    left:calc(50% + min(28.26cqw,39.74cqh));
+  }
+  .figma-edition .figma-esgoto__folio{
+    right:calc((100% - min(100cqw,140.625cqh))/2 + min(3.54cqw,4.98cqh));
+  }
+}
 .figma-edition .figma-scene.is-active .figma-esgoto__portrait{animation:esgoto-portrait-in .9s cubic-bezier(.16,1,.3,1) both}
 .figma-edition .figma-scene.is-active .figma-esgoto__water img{animation:esgoto-water-drift 28s ease-in-out infinite alternate}
 .figma-edition .figma-scene.is-active .figma-esgoto__map img{animation:esgoto-map-drift 16s ease-in-out infinite alternate}
@@ -1549,7 +1565,7 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   min-width:0;
   overflow:hidden;
   color:#1b0404;
-  font:300 min(1.6cqw,2.25cqh)/1.3 DMSans,Arial,sans-serif;
+  font:300 min(1.3889cqw,1.9531cqh)/1.3 DMSans,Arial,sans-serif;
   text-align:justify;
   hyphens:auto;
   overflow-wrap:anywhere;
@@ -1622,29 +1638,6 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
 .figma-edition .figma-scene.is-active .figma-editorial__divider{opacity:1;transform:scaleY(1)}
 @keyframes editorial-water-drift{
   to{transform:rotate(180.35deg) scale(1.07) translate3d(1%,-.8%,0)}
-}
-@media(max-aspect-ratio:1/1){
-  .figma-edition .figma-frame--editorial{width:100vw;height:100svh;container-type:size}
-  .figma-edition .figma-summary__panel{top:0;right:0;bottom:auto;width:100%;height:48svh}
-  .figma-edition .figma-editorial__panel{top:48svh;right:0;bottom:0;width:100%;height:52svh}
-  .figma-edition .figma-summary__title,.figma-edition .figma-editorial__title{top:4svh;font-size:clamp(1.7rem,6vw,2.35rem)}
-  .figma-edition .figma-summary__title{left:5vw}
-  .figma-edition .figma-editorial__title{right:5vw}
-  .figma-edition .figma-summary__columns{top:12svh;left:4vw;width:92vw;height:32svh;column-gap:4vw}
-  .figma-edition .figma-summary__list{gap:.2svh}
-  .figma-edition .figma-summary__item{min-height:5.8svh;grid-template-columns:7vw 1px minmax(0,1fr) 2vw;column-gap:1.4vw}
-  .figma-edition .figma-summary__number,.figma-edition .figma-summary__name{font-size:clamp(.75rem,2.6vw,1rem)}
-  .figma-edition .figma-summary__item i{width:1px;height:2.5svh}
-  .figma-edition .figma-editorial__water{inset:-4% -8%}
-  .figma-edition .figma-editorial__columns{top:10svh;right:5vw;bottom:7svh;left:5vw;column-gap:4vw}
-  .figma-edition .figma-editorial__column{font-size:clamp(.56rem,1.9vw,.76rem);line-height:1.18}
-  .figma-edition .figma-editorial__column p{margin-bottom:.8svh}
-  .figma-edition .figma-editorial__watermark{top:12svh;left:17vw;width:66vw;height:26svh}
-  .figma-edition .figma-editorial__institution,.figma-edition .figma-editorial__folio{bottom:2svh;font-size:.54rem}
-  .figma-edition .figma-editorial__institution{left:5vw}
-  .figma-edition .figma-editorial__folio{right:5vw}
-  .figma-edition .figma-editorial__divider{top:48svh;right:0;bottom:auto;left:0;width:100%;height:1px;transform:scaleX(.85)}
-  .figma-edition .figma-scene.is-active .figma-editorial__divider{transform:scaleX(1)}
 }
 @media(prefers-reduced-motion:reduce){
   .figma-edition .figma-editorial__water img{animation:none}
@@ -1928,7 +1921,6 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   top:31.9cqh;
   left:28.26cqw;
 }
-.figma-edition:has(#contextualizacao.is-active) .brand{visibility:hidden}
 .figma-edition .figma-contextualizacao__callout{
   position:absolute;
   z-index:2;
@@ -2013,7 +2005,6 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
     padding-right:min(2cqw,2.45cqh);
     padding-left:min(2cqw,2.45cqh);
   }
-  .figma-edition:has(#contextualizacao.is-active) .reader-controls{left:67%}
 }
 @media(max-aspect-ratio:1/1){
   .figma-edition .figma-frame--contextualizacao{width:100vw;height:100svh}
@@ -2058,7 +2049,6 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   color:var(--ink);
   box-shadow:none;
 }
-.figma-edition:has(#esgoto-transformacao.is-active) .brand{visibility:hidden}
 .figma-edition .transformacao__left-paper{
   position:absolute;inset:0 50% 0 0;background:#fff2f2;
 }
@@ -2233,4 +2223,217 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
   .figma-edition .figma-scene.is-active .transformacao__tilly,.figma-edition .figma-scene.is-active .transformacao__column,.figma-edition .figma-scene.is-active .transformacao__altamira,.figma-edition .figma-scene.is-active .transformacao__dek,.figma-edition .figma-scene.is-active .transformacao__title,.figma-edition .figma-scene.is-active .transformacao__folio,.figma-edition .figma-scene.is-active .transformacao__chart{animation:none;opacity:1;transform:none;clip-path:none}
   .figma-edition .figma-scene.is-active .transformacao-chart__gridline,.figma-edition .figma-scene.is-active .transformacao-chart__bar,.figma-edition .figma-scene.is-active .transformacao-chart__value{animation:none;opacity:1;transform:none;stroke-dashoffset:0}
   .figma-edition .transformacao__divider{transition:none}
+}
+
+/* Padrões comuns das páginas compostas em HTML. Os PNGs preservam sua arte. */
+.figma-edition .figma-team__label{
+  font-size:min(2.2cqw,3.1cqh);
+}
+.figma-edition .figma-summary__item i{
+  height:3.1cqh;
+  transform:none;
+}
+.figma-edition .figma-summary__item:hover i,
+.figma-edition .figma-summary__item:focus-visible i{transform:scaleY(1.08)}
+/* A arte ocupa a tela. A imagem inteira permanece visível sem deformação. */
+.figma-edition .figma-scene .figma-frame:has(> .figma-export){
+  position:relative;
+  display:block;
+  isolation:isolate;
+  width:100vw;
+  height:100svh;
+  max-width:none;
+  max-height:none;
+  aspect-ratio:auto;
+  margin:0;
+  box-shadow:none;
+  background:#fff2f2;
+}
+.figma-edition .figma-scene .figma-frame:has(> .figma-export)::before{
+  position:absolute;
+  z-index:0;
+  inset:-3rem;
+  background:var(--frame-image) center / cover no-repeat;
+  filter:blur(2.5rem) brightness(.8);
+  content:"";
+}
+.figma-edition .figma-scene .figma-frame:has(> .figma-export) .figma-export{
+  position:absolute;
+  z-index:1;
+  inset:0;
+  display:block;
+  width:100%;height:100%;
+  min-width:0;min-height:0;
+  object-fit:contain;
+}
+@media(min-width:701px){
+  .figma-edition #sumario-editorial .figma-frame--editorial{
+    width:var(--page-width);
+    height:var(--page-height);
+    aspect-ratio:auto;
+  }
+}
+@media(max-width:700px){
+  .figma-edition .reader-controls{bottom:calc(.55rem + env(safe-area-inset-bottom,0px))}
+  .figma-edition .figma-team__label{font-size:clamp(1rem,4.5vw,1.25rem)}
+  .figma-edition .figma-summary__item i{height:3.5svh}
+}
+
+/* Leitor com páginas internas centralizadas e controles no rodapé. */
+.figma-edition{
+  --reader-footer-height:calc(5.25rem + env(safe-area-inset-bottom,0px));
+  --page-width:min(calc(100vw - 2rem),calc((100svh - var(--reader-footer-height) - 2rem)*1.40625));
+  --page-height:calc(var(--page-width)/1.40625);
+  --reader-zoom:1;
+}
+html.figma-edition,body.figma-edition{background:#292929}
+.figma-edition #magazine{background:#292929}
+.figma-edition .figma-scene.is-interior{bottom:var(--reader-footer-height);height:auto}
+.figma-edition .figma-scene.is-cover,
+.figma-edition .figma-scene.is-back-cover{--page-width:100vw;--page-height:100svh}
+.figma-edition .figma-page-scroll{
+  position:absolute;inset:0;display:flex;align-items:safe center;justify-content:safe center;
+  overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;
+}
+.figma-edition .figma-page-zoom{
+  position:relative;flex:none;
+  width:calc(var(--page-width)*var(--reader-zoom));
+  height:calc(var(--page-height)*var(--reader-zoom));
+}
+.figma-edition .figma-scene .figma-page-zoom>.figma-frame{
+  position:absolute;top:0;left:0;display:block;
+  width:var(--page-width);height:var(--page-height);
+  max-width:none;max-height:none;aspect-ratio:auto;
+  margin:0;scale:var(--reader-zoom);transform-origin:top left;
+}
+.figma-edition .figma-scene.is-interior .figma-frame:has(> .figma-export){
+  width:var(--page-width);height:var(--page-height);
+}
+.figma-edition .reader-footer{
+  position:fixed;z-index:40;inset:auto 0 0;display:flex;flex-direction:column;
+  justify-content:space-between;min-height:var(--reader-footer-height);
+  padding:.55rem 1.25rem calc(.38rem + env(safe-area-inset-bottom,0px));
+  background:#f6f1f0;color:#390a0a;
+  box-shadow:0 -.3rem 1.5rem rgb(0 0 0 / 13%);
+}
+.figma-edition .reader-footer__main{
+  display:grid;grid-template-columns:minmax(12rem,1fr) auto minmax(12rem,1fr);
+  align-items:center;gap:1rem;min-height:2.55rem;
+}
+.figma-edition .reader-footer__identity{display:flex;align-items:center;gap:.85rem;min-width:0}
+.figma-edition .index-trigger{
+  position:static;flex:none;gap:.38rem;border:0;border-radius:.35rem;
+  padding:.48rem;background:transparent;color:#390a0a;backdrop-filter:none;
+}
+.figma-edition .index-trigger:hover{background:#eadedd;color:#390a0a}
+.figma-edition .menu-icon{width:.9rem}
+.figma-edition .menu-icon i{background:#390a0a}
+.figma-edition .reader-location{
+  position:static;display:block;overflow:hidden;max-width:17rem;
+  color:#776363;font:400 .68rem/1.2 DMSans,sans-serif;
+  letter-spacing:0;text-overflow:ellipsis;white-space:nowrap;transform:none;
+}
+.figma-edition .reader-controls{
+  position:static;display:flex;justify-self:center;align-items:center;gap:.4rem;
+  border:0;border-radius:0;padding:0;background:transparent;color:#390a0a;
+  box-shadow:none;backdrop-filter:none;transform:none;
+}
+.figma-edition .reader-footer button{
+  display:grid;place-items:center;min-width:2rem;height:2rem;
+  border:0;border-radius:.35rem;background:transparent;color:#390a0a;
+  transition:background .2s ease,color .2s ease;
+}
+.figma-edition .reader-footer button:hover:not(:disabled){background:#eadedd;color:#390a0a;transform:none}
+.figma-edition .reader-footer button:focus-visible,
+.figma-edition .reader-footer input:focus-visible{outline-color:#661414}
+.figma-edition .reader-footer button:disabled{opacity:.35}
+.figma-edition .page-count{min-width:4.7rem;color:#390a0a;font:500 .82rem/1 DMSans,sans-serif;letter-spacing:0}
+.figma-edition .page-count i{color:#8d7979}
+.figma-edition .reader-tools{display:flex;justify-self:end;align-items:center;gap:.22rem}
+.figma-edition #zoom-reset{min-width:3.3rem;font-size:.72rem;font-variant-numeric:tabular-nums}
+.figma-edition #voice-toggle[aria-pressed=true]{background:#390a0a;color:#fff2f2}
+.figma-edition .reader-footer__progress{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:.7rem;color:#8d7979;font:400 .58rem/1 DMSans,sans-serif}
+.figma-edition #page-range{width:100%;height:1.15rem;margin:0;accent-color:#661414}
+.figma-edition #page-range::-webkit-slider-runnable-track{background:linear-gradient(90deg,#661414 0 var(--progress,0%),#c9b7b7 var(--progress,0%) 100%)}
+.figma-edition #page-range::-webkit-slider-thumb{border-color:#fff2f2;background:#661414;box-shadow:0 0 0 1px #661414}
+.figma-edition #page-range::-moz-range-track{background:#c9b7b7}
+.figma-edition #page-range::-moz-range-progress{background:#661414}
+.figma-edition #page-range::-moz-range-thumb{border-color:#fff2f2;background:#661414}
+.figma-edition .index-drawer{top:auto;right:1rem;bottom:calc(var(--reader-footer-height) + .5rem);max-height:calc(100svh - var(--reader-footer-height) - 1rem)}
+.figma-edition .drawer-scrim{inset:0 0 var(--reader-footer-height)}
+@media(max-width:700px){
+  .figma-edition{--reader-footer-height:calc(7.6rem + env(safe-area-inset-bottom,0px));--page-width:min(calc(100vw - 1rem),calc((100svh - var(--reader-footer-height) - 1rem)*1.40625))}
+  .figma-edition .reader-footer{padding:.35rem .55rem calc(.3rem + env(safe-area-inset-bottom,0px))}
+  .figma-edition .reader-footer__main{grid-template-columns:minmax(0,1fr) auto;gap:.12rem .35rem}
+  .figma-edition .reader-footer__identity{gap:.3rem}
+  .figma-edition .index-trigger__text{display:none}
+  .figma-edition .reader-location{max-width:8rem;font-size:.57rem}
+  .figma-edition .reader-controls{grid-column:2;grid-row:1}
+  .figma-edition .reader-tools{grid-column:1/-1;justify-self:center}
+  .figma-edition .reader-footer button{min-width:1.8rem;height:1.75rem}
+  .figma-edition .reader-footer__progress{gap:.35rem}
+}
+
+/* A abertura usa a área e a escala tipográfica do frame original (1440 × 1024). */
+.figma-edition #sumario-editorial .figma-editorial__columns{bottom:4.6cqh}
+
+/* O rodapé da capa aparece ao aproximar o ponteiro da borda inferior. */
+.figma-edition .reader-footer{transition:transform .34s cubic-bezier(.22,1,.36,1),opacity .26s ease}
+@media(hover:hover) and (pointer:fine){
+  .figma-edition.is-on-cover:not(.is-cover-footer-visible) .reader-footer:not(:focus-within):not(:has(#index-trigger[aria-expanded="true"])){
+    transform:translateY(102%);opacity:0;pointer-events:none
+  }
+}
+
+/* Troca de páginas curta e contínua, inclusive nos saltos do sumário. */
+.figma-edition .figma-scene.is-leaving{
+  opacity:0;transform:translate3d(-1.2%,0,0);
+  transition:opacity .62s cubic-bezier(.2,.7,.2,1),transform .62s cubic-bezier(.2,.7,.2,1),visibility .62s step-end
+}
+.figma-edition .figma-scene.is-leaving.leave-previous{transform:translate3d(1.2%,0,0)}
+.figma-edition .figma-scene.is-leaving .figma-frame,
+.figma-edition .figma-scene.is-leaving.leave-next .figma-frame,
+.figma-edition .figma-scene.is-leaving.leave-previous .figma-frame,
+.figma-edition .figma-scene.is-active.enter-next:not(.is-entering) .figma-frame,
+.figma-edition .figma-scene.is-active.enter-previous:not(.is-entering) .figma-frame{
+  animation:none;transform:none;filter:none;box-shadow:none
+}
+.figma-edition .figma-scene.is-leaving .figma-frame::before,
+.figma-edition .figma-scene.is-leaving .figma-frame::after{display:none}
+.figma-edition .figma-scene.is-entering.enter-next .figma-frame,
+.figma-edition .figma-scene.is-entering.enter-previous .figma-frame{transform:translate3d(1.2%,0,0);filter:none}
+.figma-edition .figma-scene.is-entering.enter-previous .figma-frame{transform:translate3d(-1.2%,0,0)}
+.figma-edition .figma-scene:not(.is-entering) .figma-frame{transition:transform .62s cubic-bezier(.2,.7,.2,1)}
+
+/* Gráficos vetoriais ocupam exatamente os recortes removidos das exportações. */
+.figma-edition .figma-chart-vector{
+  position:absolute;z-index:2;display:block;
+  max-width:none;object-fit:fill;pointer-events:none;user-select:none;
+}
+
+/* O vídeo ocupa a contracapa; a faixa transparente preserva o rodapé por aproximação. */
+.figma-edition .figma-frame--video-back-cover{overflow:hidden;background:#052d51}
+.figma-edition .figma-frame--video-back-cover iframe{
+  position:absolute;z-index:1;inset:0;display:block;width:100%;height:100%;border:0
+}
+.figma-edition .figma-video-footer-zone{
+  position:absolute;z-index:2;right:0;bottom:0;left:0;height:130px;background:transparent
+}
+@media(hover:none){.figma-edition .figma-video-footer-zone{display:none}}
+
+/* As pranchas exportadas entram com a mesma delicadeza das páginas em HTML. */
+@keyframes figma-export-arrive{
+  from{opacity:.68;transform:translate3d(0,.9%,0) scale(.995)}
+  to{opacity:1;transform:translate3d(0,0,0) scale(1)}
+}
+.figma-edition .figma-scene.is-active:not(.is-leaving) .figma-export,
+.figma-edition .figma-scene.is-active:not(.is-leaving) .figma-chart-vector,
+.figma-edition .figma-scene.is-active:not(.is-leaving) .figma-frame--cover .figma-cover__composition{
+  animation:figma-export-arrive .78s cubic-bezier(.16,1,.3,1) both
+}
+.figma-edition .figma-scene.is-active:not(.is-leaving) .figma-chart-vector{animation-delay:.1s}
+@media(prefers-reduced-motion:reduce){
+  .figma-edition .figma-scene.is-active .figma-export,
+  .figma-edition .figma-scene.is-active .figma-chart-vector,
+  .figma-edition .figma-scene.is-active .figma-frame--cover .figma-cover__composition{animation:none;opacity:1;transform:none}
 }
