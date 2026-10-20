@@ -2385,25 +2385,105 @@ html.figma-edition,body.figma-edition{background:#292929}
   }
 }
 
-/* Troca de páginas curta e contínua, inclusive nos saltos do sumário. */
+/* Folha de revista: a página parte da lombada e vira da direita para a esquerda. */
 .figma-edition .figma-scene.is-leaving{
-  opacity:0;transform:translate3d(-1.2%,0,0);
-  transition:opacity .62s cubic-bezier(.2,.7,.2,1),transform .62s cubic-bezier(.2,.7,.2,1),visibility .62s step-end
+  z-index:4;opacity:1;visibility:visible;pointer-events:none;
+  transform:none;transition:none;perspective:1800px
 }
-.figma-edition .figma-scene.is-leaving.leave-previous{transform:translate3d(1.2%,0,0)}
-.figma-edition .figma-scene.is-leaving .figma-frame,
-.figma-edition .figma-scene.is-leaving.leave-next .figma-frame,
-.figma-edition .figma-scene.is-leaving.leave-previous .figma-frame,
-.figma-edition .figma-scene.is-active.enter-next:not(.is-entering) .figma-frame,
-.figma-edition .figma-scene.is-active.enter-previous:not(.is-entering) .figma-frame{
-  animation:none;transform:none;filter:none;box-shadow:none
+/* A folha gira no wrapper .figma-page-zoom. Neutraliza a animação legada
+   no frame interno para não somar um segundo giro de 180° (360° no total). */
+.figma-edition .figma-scene.is-leaving .figma-page-zoom>.figma-frame{
+  animation:none!important;transform:none!important;filter:none!important;
+  transform-origin:50% 50%!important;overflow:hidden!important
 }
-.figma-edition .figma-scene.is-leaving .figma-frame::before,
-.figma-edition .figma-scene.is-leaving .figma-frame::after{display:none}
-.figma-edition .figma-scene.is-entering.enter-next .figma-frame,
-.figma-edition .figma-scene.is-entering.enter-previous .figma-frame{transform:translate3d(1.2%,0,0);filter:none}
-.figma-edition .figma-scene.is-entering.enter-previous .figma-frame{transform:translate3d(-1.2%,0,0)}
-.figma-edition .figma-scene:not(.is-entering) .figma-frame{transition:transform .62s cubic-bezier(.2,.7,.2,1)}
+.figma-edition .figma-scene.is-leaving .figma-page-zoom>.figma-frame::before,
+.figma-edition .figma-scene.is-leaving .figma-page-zoom>.figma-frame::after{display:none!important}
+.figma-edition .figma-scene:not(.is-active){transition:opacity 0s,visibility 0s step-end}
+.figma-edition .figma-scene.is-leaving .figma-page-scroll{
+  overflow:visible;transform-style:preserve-3d
+}
+.figma-edition .figma-page-zoom{
+  transform-style:preserve-3d;backface-visibility:visible;
+  box-shadow:0 .8rem 1.65rem rgb(38 9 8 / 16%),0 2px 0 rgb(255 255 255 / 72%);
+  will-change:transform,opacity,box-shadow
+}
+.figma-edition .figma-scene.is-turned-next .figma-page-zoom{
+  transform-origin:0% 50%;transform:translateZ(0) rotateY(-180deg);opacity:0;box-shadow:none
+}
+.figma-edition .figma-scene.is-turned-previous .figma-page-zoom{
+  transform-origin:100% 50%;transform:translateZ(0) rotateY(180deg);opacity:0;box-shadow:none
+}
+.figma-edition .figma-scene.is-entering .figma-page-zoom{opacity:0}
+.figma-edition .figma-scene.is-leaving .figma-frame:has(> .figma-export)::before{display:none}
+.figma-edition .figma-scene:not(.is-active) .figma-page-zoom{opacity:0}
+.figma-edition .figma-page-zoom>.figma-frame{
+  z-index:1;backface-visibility:hidden;transform-style:preserve-3d
+}
+.figma-edition .figma-page-zoom::before,
+.figma-edition .figma-page-zoom::after{
+  position:absolute;inset:0;pointer-events:none;content:"";transform-style:preserve-3d
+}
+.figma-edition .figma-scene.is-leaving.leave-next .figma-page-zoom{
+  transform-origin:0% 50%;animation:magazine-leaf-next 1s cubic-bezier(.48,.02,.18,1) both
+}
+.figma-edition .figma-scene.is-leaving.leave-previous .figma-page-zoom{
+  transform-origin:100% 50%;animation:magazine-leaf-previous 1s cubic-bezier(.48,.02,.18,1) both
+}
+/* A luz percorre a dobra; a face posterior tem papel quente, relevo e fibras discretas. */
+.figma-edition .figma-scene.is-leaving.leave-next .figma-page-zoom::before,
+.figma-edition .figma-scene.is-leaving.leave-previous .figma-page-zoom::before{
+  z-index:2;backface-visibility:hidden;opacity:0;
+  background:
+    linear-gradient(90deg,transparent 0%,rgb(30 7 6 / 7%) 30%,rgb(30 7 6 / 35%) 45%,rgb(255 252 244 / 88%) 49.2%,rgb(255 255 255 / 30%) 51%,rgb(34 8 7 / 30%) 55%,transparent 72%) 100% 0 / 38% 100% no-repeat,
+    linear-gradient(90deg,transparent 0%,rgb(20 4 4 / 12%) 100%) 100% 0 / 100% 100% no-repeat;
+  mix-blend-mode:multiply;animation:magazine-fold-glide 1s cubic-bezier(.48,.02,.18,1) both
+}
+.figma-edition .figma-scene.is-leaving.leave-previous .figma-page-zoom::before{
+  transform:scaleX(-1);animation-name:magazine-fold-glide-reverse
+}
+.figma-edition .figma-scene.is-leaving .figma-page-zoom::after{
+  z-index:0;transform:rotateY(180deg) translateZ(1px);backface-visibility:hidden;
+  border:1px solid rgb(105 71 59 / 16%);
+  background:
+    repeating-linear-gradient(0deg,rgb(88 53 41 / 2%) 0 1px,transparent 1px 4px),
+    linear-gradient(90deg,#e7d9d1 0%,#fffaf5 15%,#f3e9e2 46%,#d4c3b9 50%,#fffaf6 54%,#f5ece6 84%,#e3d5cd 100%);
+  box-shadow:inset 0 0 2rem rgb(57 10 10 / 13%),inset 0 0 0 1px rgb(255 255 255 / 55%)
+}
+.figma-edition .figma-scene.is-active.enter-next:not(.is-entering) .figma-page-zoom{
+  animation:magazine-page-arrive-next .82s cubic-bezier(.16,1,.3,1) both
+}
+.figma-edition .figma-scene.is-active.enter-previous:not(.is-entering) .figma-page-zoom{
+  animation:magazine-page-arrive-previous .82s cubic-bezier(.16,1,.3,1) both
+}
+@keyframes magazine-leaf-next{
+  0%{opacity:1;transform:translate3d(0,0,0) rotateY(0) rotateX(0);box-shadow:0 .8rem 1.65rem rgb(38 9 8 / 16%),0 2px 0 rgb(255 255 255 / 72%)}
+  12%{transform:translate3d(0,0,34px) rotateY(-8deg) rotateX(.7deg);box-shadow:0 1.15rem 2rem rgb(22 5 5 / 20%),0 3px 0 rgb(255 255 255 / 85%)}
+  38%{transform:translate3d(0,0,92px) rotateY(-52deg) rotateX(1.2deg);box-shadow:0 1.8rem 2.5rem rgb(22 5 5 / 24%),0 4px 0 rgb(255 255 255 / 88%)}
+  58%{transform:translate3d(0,0,116px) rotateY(-104deg) rotateX(-.7deg);box-shadow:0 1.5rem 2.3rem rgb(22 5 5 / 20%),0 3px 0 rgb(255 255 255 / 80%)}
+  82%{transform:translate3d(0,0,76px) rotateY(-154deg) rotateX(-.4deg);box-shadow:0 .75rem 1.6rem rgb(22 5 5 / 15%),0 2px 0 rgb(255 255 255 / 72%)}
+  94%{opacity:1;transform:translate3d(0,0,25px) rotateY(-176deg) rotateX(0);box-shadow:0 .4rem .9rem rgb(22 5 5 / 8%),0 1px 0 rgb(255 255 255 / 55%)}
+  100%{opacity:0;transform:translate3d(0,0,0) rotateY(-180deg) rotateX(0);box-shadow:none}
+}
+@keyframes magazine-leaf-previous{
+  0%{opacity:1;transform:translate3d(0,0,0) rotateY(0) rotateX(0);box-shadow:0 .8rem 1.65rem rgb(38 9 8 / 16%),0 2px 0 rgb(255 255 255 / 72%)}
+  12%{transform:translate3d(0,0,34px) rotateY(8deg) rotateX(-.7deg);box-shadow:0 1.15rem 2rem rgb(22 5 5 / 20%),0 3px 0 rgb(255 255 255 / 85%)}
+  38%{transform:translate3d(0,0,92px) rotateY(52deg) rotateX(-1.2deg);box-shadow:0 1.8rem 2.5rem rgb(22 5 5 / 24%),0 4px 0 rgb(255 255 255 / 88%)}
+  58%{transform:translate3d(0,0,116px) rotateY(104deg) rotateX(.7deg);box-shadow:0 1.5rem 2.3rem rgb(22 5 5 / 20%),0 3px 0 rgb(255 255 255 / 80%)}
+  82%{transform:translate3d(0,0,76px) rotateY(154deg) rotateX(.4deg);box-shadow:0 .75rem 1.6rem rgb(22 5 5 / 15%),0 2px 0 rgb(255 255 255 / 72%)}
+  94%{opacity:1;transform:translate3d(0,0,25px) rotateY(176deg) rotateX(0);box-shadow:0 .4rem .9rem rgb(22 5 5 / 8%),0 1px 0 rgb(255 255 255 / 55%)}
+  100%{opacity:0;transform:translate3d(0,0,0) rotateY(180deg) rotateX(0);box-shadow:none}
+}
+@keyframes magazine-fold-glide{0%{opacity:.35;background-position:100% 0,100% 0}42%{opacity:1;background-position:45% 0,100% 0}82%{opacity:.72;background-position:0 0,0 0}100%{opacity:0;background-position:0 0,0 0}}
+@keyframes magazine-fold-glide-reverse{0%{opacity:.35;background-position:100% 0,100% 0}42%{opacity:1;background-position:45% 0,100% 0}82%{opacity:.72;background-position:0 0,0 0}100%{opacity:0;background-position:0 0,0 0}}
+@keyframes magazine-page-arrive-next{from{opacity:.72;transform:translate3d(2.8%,0,-64px) rotateY(-3deg) scale(.985)}to{opacity:1;transform:translate3d(0,0,0) rotateY(0) scale(1)}}
+@keyframes magazine-page-arrive-previous{from{opacity:.72;transform:translate3d(-2.8%,0,-64px) rotateY(3deg) scale(.985)}to{opacity:1;transform:translate3d(0,0,0) rotateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){
+  .figma-edition .figma-scene.is-leaving{perspective:none}
+  .figma-edition .figma-scene.is-leaving .figma-page-scroll{overflow:auto}
+  .figma-edition .figma-page-zoom{will-change:auto}
+  .figma-edition .figma-scene.is-leaving .figma-page-zoom::before,
+  .figma-edition .figma-scene.is-leaving .figma-page-zoom::after{display:none}
+}
 
 /* Gráficos vetoriais ocupam exatamente os recortes removidos das exportações. */
 .figma-edition .figma-chart-vector{
@@ -2436,4 +2516,72 @@ html.figma-edition,body.figma-edition{background:#292929}
   .figma-edition .figma-scene.is-active .figma-export,
   .figma-edition .figma-scene.is-active .figma-chart-vector,
   .figma-edition .figma-scene.is-active .figma-frame--cover .figma-cover__composition{animation:none;opacity:1;transform:none}
+}
+
+/* Em alguns capítulos, a folha ganha uma borda ondulada e um brilho de água. */
+.figma-edition .figma-scene.is-leaving.turn-water.leave-next .figma-page-zoom{
+  animation:magazine-water-turn-next 1.12s cubic-bezier(.46,.02,.18,1) both
+}
+.figma-edition .figma-scene.is-leaving.turn-water.leave-previous .figma-page-zoom{
+  animation:magazine-water-turn-previous 1.12s cubic-bezier(.46,.02,.18,1) both
+}
+.figma-edition .figma-scene.is-leaving.turn-water .figma-page-zoom::before{
+  z-index:3;mix-blend-mode:screen;opacity:0;
+  background:linear-gradient(90deg,transparent 36%,rgb(185 236 255 / 10%) 43%,rgb(185 236 255 / 76%) 49.5%,rgb(255 255 255 / 72%) 51%,rgb(185 236 255 / 12%) 58%,transparent 70%) 100% 0 / 58% 100% no-repeat;
+  animation:magazine-water-glint 1.12s cubic-bezier(.46,.02,.18,1) both
+}
+@keyframes magazine-water-turn-next{
+  0%{opacity:1;transform:translate3d(0,0,0) rotateY(0);clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
+  26%{transform:translate3d(0,0,64px) rotateY(-28deg);clip-path:polygon(0 0,100% 0,99% 23%,100% 39%,98.8% 55%,100% 72%,99% 86%,100% 100%,0 100%)}
+  54%{transform:translate3d(0,0,112px) rotateY(-94deg);clip-path:polygon(0 0,100% 0,98.8% 23%,100% 39%,98.4% 55%,100% 72%,98.8% 86%,100% 100%,0 100%)}
+  82%{transform:translate3d(0,0,58px) rotateY(-154deg);clip-path:polygon(0 0,100% 0,99.3% 23%,100% 39%,99% 55%,100% 72%,99.2% 86%,100% 100%,0 100%)}
+  94%{opacity:1;transform:translate3d(0,0,20px) rotateY(-176deg);clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
+  100%{opacity:0;transform:translate3d(0,0,0) rotateY(-180deg);clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
+}
+@keyframes magazine-water-turn-previous{
+  0%{opacity:1;transform:translate3d(0,0,0) rotateY(0);clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
+  26%{transform:translate3d(0,0,64px) rotateY(28deg);clip-path:polygon(0 0,100% 0,100% 100%,0 100%,1% 86%,0 72%,1.2% 55%,0 39%,1% 23%)}
+  54%{transform:translate3d(0,0,112px) rotateY(94deg);clip-path:polygon(0 0,100% 0,100% 100%,0 100%,1.2% 86%,0 72%,1.6% 55%,0 39%,1.2% 23%)}
+  82%{transform:translate3d(0,0,58px) rotateY(154deg);clip-path:polygon(0 0,100% 0,100% 100%,0 100%,.8% 86%,0 72%,1% 55%,0 39%,.7% 23%)}
+  94%{opacity:1;transform:translate3d(0,0,20px) rotateY(176deg);clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
+  100%{opacity:0;transform:translate3d(0,0,0) rotateY(180deg);clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
+}
+@keyframes magazine-water-glint{0%{opacity:0;background-position:100% 0}30%{opacity:.95;background-position:58% 0}72%{opacity:.42;background-position:7% 0}100%{opacity:0;background-position:0 0}}
+
+/* Pequeno reflexo e círculos de onda reagem ao movimento e ao toque do leitor. */
+.figma-edition .reader-water-cursor,
+.figma-edition .reader-water-ripple{
+  position:fixed;z-index:12;pointer-events:none;border:1px solid rgb(185 236 255 / 50%);
+  border-radius:50%;mix-blend-mode:screen
+}
+.figma-edition .reader-water-cursor{
+  left:var(--water-x,-10rem);top:var(--water-y,-10rem);width:clamp(4rem,7vw,7.5rem);aspect-ratio:1;
+  opacity:0;transform:translate(-50%,-50%) scale(.48);
+  background:radial-gradient(circle,rgb(185 236 255 / 10%),rgb(185 236 255 / 2%) 48%,transparent 72%);
+  box-shadow:inset 0 0 1.1rem rgb(185 236 255 / 15%),0 0 1.3rem rgb(185 236 255 / 10%);
+  transition:opacity .28s ease,transform .5s cubic-bezier(.16,1,.3,1)
+}
+.figma-edition .reader-water-cursor::before,
+.figma-edition .reader-water-cursor::after{position:absolute;inset:16%;border:1px solid rgb(185 236 255 / 34%);border-radius:50%;content:""}
+.figma-edition .reader-water-cursor::after{inset:33%;border-color:rgb(255 255 255 / 28%)}
+.figma-edition .reader-water-cursor.is-visible{opacity:.56;transform:translate(-50%,-50%) scale(1)}
+.figma-edition .reader-water-ripple{
+  left:var(--ripple-x);top:var(--ripple-y);width:clamp(4.5rem,8vw,8rem);aspect-ratio:1;
+  opacity:0;box-shadow:0 0 1.2rem rgb(185 236 255 / 16%);
+  animation:reader-water-touch .9s cubic-bezier(.16,1,.3,1) both
+}
+.figma-edition .reader-water-ripple::after{
+  position:absolute;inset:18%;border:1px solid rgb(255 255 255 / 45%);border-radius:50%;content:"";
+  animation:reader-water-touch .9s .08s cubic-bezier(.16,1,.3,1) both
+}
+@keyframes reader-water-touch{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.16)}
+  18%{opacity:.48}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.45)}
+}
+@media(hover:none), (pointer:coarse){.figma-edition .reader-water-cursor{display:none}}
+@media(prefers-reduced-motion:reduce){
+  .figma-edition .figma-scene.is-leaving.turn-water .figma-page-zoom,
+  .figma-edition .figma-scene.is-leaving.turn-water .figma-page-zoom::before{animation:none}
+  .figma-edition .reader-water-cursor,.figma-edition .reader-water-ripple{display:none}
 }

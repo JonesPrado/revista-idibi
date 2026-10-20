@@ -5,7 +5,7 @@
     ['sumario-editorial', 'Sumário e editorial', '03-sumario-editorial.png'],
     ['editorial', 'Editorial', '04-editorial.png'],
     ['contextualizacao', 'Contextualização e introdução', '05-introducao.png'],
-    ['garimpo-1', 'Garimpo e mercúrio', '06-garimpo-1.png'],
+    ['garimpo-1', 'Garimpo e mercúrio', '06-garimpo-1.png?v=2'],
     ['garimpo-2', 'Garimpo e mercúrio', '07-garimpo-2.png'],
     ['esgoto', 'Esgoto e saneamento', '08-esgoto.png'],
     ['esgoto-transformacao', 'Esgoto e transformação do território', '09-esgoto-transformacao.png'],
@@ -230,6 +230,7 @@
       let speechToken = 0;
       let chartReplay = 0;
       const motionAllowed = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const waterTurnPages = new Set(['garimpo-1', 'esgoto-transformacao', 'politicas-4', 'conclusao-referencias']);
       const voiceButton = document.querySelector('#voice-toggle');
       const zoomOut = document.querySelector('#zoom-out');
       const zoomIn = document.querySelector('#zoom-in');
@@ -371,14 +372,17 @@
         replayChartMotion(index);
         const outgoing = scenes[activeScene];
         const incoming = scenes[index];
+        const waterTurn = motionAllowed && waterTurnPages.has(incoming.id);
         window.clearTimeout(transitionTimer);
         scenes.forEach((scene) => {
-          if (scene !== outgoing && scene !== incoming) scene.classList.remove('is-active', 'is-leaving', 'leave-next', 'leave-previous', 'is-entering', 'enter-next', 'enter-previous');
+          if (scene !== outgoing && scene !== incoming) scene.classList.remove('is-active', 'is-leaving', 'leave-next', 'leave-previous', 'is-entering', 'enter-next', 'enter-previous', 'is-turned-next', 'is-turned-previous', 'turn-water');
         });
         outgoing.classList.remove('enter-next', 'enter-previous', 'is-entering');
+        outgoing.classList.remove('turn-water');
         outgoing.classList.add('is-leaving', `leave-${direction}`);
+        if (waterTurn) outgoing.classList.add('turn-water');
         outgoing.setAttribute('aria-hidden', 'true');
-        incoming.classList.remove('is-leaving', 'leave-next', 'leave-previous');
+        incoming.classList.remove('is-leaving', 'leave-next', 'leave-previous', 'is-turned-next', 'is-turned-previous', 'turn-water');
         incoming.classList.add('is-active', 'is-entering', `enter-${direction}`);
         incoming.setAttribute('aria-hidden', 'false');
         activeScene = index;
@@ -386,10 +390,11 @@
         ensureSceneImage(index + 1);
         requestAnimationFrame(() => requestAnimationFrame(() => incoming.classList.remove('is-entering')));
         transitionTimer = window.setTimeout(() => {
-          outgoing.classList.remove('is-active', 'is-leaving', 'leave-next', 'leave-previous');
+          outgoing.classList.add(`is-turned-${direction}`);
+          outgoing.classList.remove('is-active', 'is-leaving', 'leave-next', 'leave-previous', 'turn-water');
           incoming.classList.remove('is-entering', 'enter-next', 'enter-previous');
           outgoing.querySelector('iframe[data-video-src]')?.removeAttribute('src');
-        }, motionAllowed ? 640 : 0);
+        }, motionAllowed ? (waterTurn ? 1160 : 1040) : 0);
       };
 
       const goToSlot = (slot) => {
@@ -408,6 +413,47 @@
         const slots = slotsForScene(index);
         goToSlot(slots[0]);
       };
+
+      // Um reflexo aquático acompanha o mouse, com ondulações leves ao tocar
+      // na página. O arraste horizontal também vira o fólio, como numa revista.
+      const waterCursor = document.createElement('div');
+      waterCursor.className = 'reader-water-cursor';
+      waterCursor.setAttribute('aria-hidden', 'true');
+      magazine.append(waterCursor);
+      let waterCursorTimer = 0;
+      let pageDrag = null;
+      const showWaterRipple = (x, y) => {
+        const ripple = document.createElement('span');
+        ripple.className = 'reader-water-ripple';
+        ripple.style.setProperty('--ripple-x', `${x}px`);
+        ripple.style.setProperty('--ripple-y', `${y}px`);
+        magazine.append(ripple);
+        ripple.addEventListener('animationend', () => ripple.remove(), { once: true });
+      };
+      magazine.addEventListener('pointermove', (event) => {
+        if (event.pointerType !== 'mouse' || !event.target.closest?.('.figma-page-scroll')) return;
+        waterCursor.style.setProperty('--water-x', `${event.clientX}px`);
+        waterCursor.style.setProperty('--water-y', `${event.clientY}px`);
+        waterCursor.classList.add('is-visible');
+        window.clearTimeout(waterCursorTimer);
+        waterCursorTimer = window.setTimeout(() => waterCursor.classList.remove('is-visible'), 520);
+      }, { passive: true });
+      magazine.addEventListener('pointerleave', () => waterCursor.classList.remove('is-visible'));
+      magazine.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0 || !event.target.closest?.('.figma-page-scroll')) return;
+        if (event.target.closest('button,a,input,[contenteditable="true"]')) return;
+        showWaterRipple(event.clientX, event.clientY);
+        if (readerZoom <= 1.05) pageDrag = { x: event.clientX, y: event.clientY, pointerId: event.pointerId };
+      });
+      document.addEventListener('pointerup', (event) => {
+        if (!pageDrag || event.pointerId !== pageDrag.pointerId) return;
+        const deltaX = event.clientX - pageDrag.x;
+        const deltaY = event.clientY - pageDrag.y;
+        pageDrag = null;
+        if (Math.abs(deltaX) < 76 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) return;
+        goToSlot(activeSlot + (deltaX < 0 ? 1 : -1));
+      });
+      document.addEventListener('pointercancel', () => { pageDrag = null; });
 
       // Nas duas capas, revelar os controles quando o ponteiro se aproxima da borda inferior.
       document.addEventListener('pointermove', (event) => {
