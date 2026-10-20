@@ -373,16 +373,21 @@
         const outgoing = scenes[activeScene];
         const incoming = scenes[index];
         const waterTurn = motionAllowed && waterTurnPages.has(incoming.id);
+        const middleTurn = motionAllowed && createTurningHalf(outgoing);
         window.clearTimeout(transitionTimer);
         scenes.forEach((scene) => {
-          if (scene !== outgoing && scene !== incoming) scene.classList.remove('is-active', 'is-leaving', 'leave-next', 'leave-previous', 'is-entering', 'enter-next', 'enter-previous', 'is-turned-next', 'is-turned-previous', 'turn-water');
+          if (scene !== outgoing && scene !== incoming) {
+            scene.querySelector('.figma-turn-leaf')?.remove();
+            scene.classList.remove('is-active', 'is-leaving', 'leave-next', 'leave-previous', 'is-entering', 'enter-next', 'enter-previous', 'is-turned-next', 'is-turned-previous', 'turn-water', 'turn-middle');
+          }
         });
         outgoing.classList.remove('enter-next', 'enter-previous', 'is-entering');
-        outgoing.classList.remove('turn-water');
+        outgoing.classList.remove('turn-water', 'turn-middle');
         outgoing.classList.add('is-leaving', `leave-${direction}`);
         if (waterTurn) outgoing.classList.add('turn-water');
+        if (middleTurn) outgoing.classList.add('turn-middle');
         outgoing.setAttribute('aria-hidden', 'true');
-        incoming.classList.remove('is-leaving', 'leave-next', 'leave-previous', 'is-turned-next', 'is-turned-previous', 'turn-water');
+        incoming.classList.remove('is-leaving', 'leave-next', 'leave-previous', 'is-turned-next', 'is-turned-previous', 'turn-water', 'turn-middle');
         incoming.classList.add('is-active', 'is-entering', `enter-${direction}`);
         incoming.setAttribute('aria-hidden', 'false');
         activeScene = index;
@@ -391,7 +396,8 @@
         requestAnimationFrame(() => requestAnimationFrame(() => incoming.classList.remove('is-entering')));
         transitionTimer = window.setTimeout(() => {
           outgoing.classList.add(`is-turned-${direction}`);
-          outgoing.classList.remove('is-active', 'is-leaving', 'leave-next', 'leave-previous', 'turn-water');
+          outgoing.querySelector('.figma-turn-leaf')?.remove();
+          outgoing.classList.remove('is-active', 'is-leaving', 'leave-next', 'leave-previous', 'turn-water', 'turn-middle');
           incoming.classList.remove('is-entering', 'enter-next', 'enter-previous');
           outgoing.querySelector('iframe[data-video-src]')?.removeAttribute('src');
         }, motionAllowed ? (waterTurn ? 1160 : 1040) : 0);
@@ -412,6 +418,20 @@
         if (index === undefined) return;
         const slots = slotsForScene(index);
         goToSlot(slots[0]);
+      };
+
+      const createTurningHalf = (scene) => {
+        const frame = scene.querySelector('.figma-page-zoom > .figma-frame');
+        if (!frame || frame.querySelector('iframe')) return false;
+        frame.parentElement.querySelector('.figma-turn-leaf')?.remove();
+        const leaf = frame.cloneNode(true);
+        leaf.classList.add('figma-turn-leaf');
+        leaf.setAttribute('aria-hidden', 'true');
+        leaf.inert = true;
+        leaf.querySelectorAll('[id]').forEach((element) => element.removeAttribute('id'));
+        leaf.querySelectorAll('button,a,input,select,textarea,[tabindex]').forEach((element) => element.setAttribute('tabindex', '-1'));
+        frame.parentElement.append(leaf);
+        return true;
       };
 
       // Um reflexo aquático acompanha o mouse, com ondulações leves ao tocar
