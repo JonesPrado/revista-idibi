@@ -458,9 +458,9 @@
         const incoming = scenes[index];
         window.clearTimeout(transitionTimer);
         scenes.forEach((scene) => {
-          if (scene !== outgoing && scene !== incoming) scene.classList.remove('is-leaving', 'leave-next', 'leave-previous', 'is-entering', 'enter-next', 'enter-previous');
+          if (scene !== outgoing && scene !== incoming) scene.classList.remove('is-active', 'is-leaving', 'leave-next', 'leave-previous', 'is-entering', 'enter-next', 'enter-previous');
         });
-        outgoing.classList.remove('is-active', 'enter-next', 'enter-previous', 'is-entering');
+        outgoing.classList.remove('enter-next', 'enter-previous', 'is-entering');
         outgoing.classList.add('is-leaving', `leave-${direction}`);
         outgoing.setAttribute('aria-hidden', 'true');
         incoming.classList.remove('is-leaving', 'leave-next', 'leave-previous');
@@ -469,9 +469,9 @@
         activeScene = index;
         requestAnimationFrame(() => requestAnimationFrame(() => incoming.classList.remove('is-entering')));
         transitionTimer = window.setTimeout(() => {
-          outgoing.classList.remove('is-leaving', 'leave-next', 'leave-previous');
+          outgoing.classList.remove('is-active', 'is-leaving', 'leave-next', 'leave-previous');
           incoming.classList.remove('is-entering', 'enter-next', 'enter-previous');
-        }, motionAllowed ? 820 : 0);
+        }, motionAllowed ? 1120 : 0);
       };
 
       const goToSlot = (slot) => {

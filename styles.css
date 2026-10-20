@@ -32,17 +32,27 @@ button,a,input{font:inherit;color:inherit}button{cursor:pointer}a{text-decoratio
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 /* Leitor baseado nas exportações originais do Figma. */
 html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;overflow:hidden;background:#1b0404}
-.figma-edition #magazine{position:fixed;inset:0;overflow:hidden;background:radial-gradient(ellipse at 50% 50%,rgba(102,20,20,.32),transparent 62%),#1b0404;perspective:1500px}
-.figma-edition .figma-scene{position:absolute;inset:0;display:grid;width:100%;height:100%;min-height:0;place-items:center;overflow:hidden;opacity:0;visibility:hidden;pointer-events:none;transform:translate3d(0,0,0);transition:opacity .58s cubic-bezier(.22,1,.36,1),transform .76s cubic-bezier(.16,1,.3,1),visibility .58s step-end;z-index:0}
+.figma-edition #magazine{position:fixed;inset:0;overflow:hidden;background:radial-gradient(ellipse at 50% 50%,rgba(102,20,20,.32),transparent 62%),#1b0404;perspective:1800px;perspective-origin:50% 48%;isolation:isolate}
+.figma-edition .figma-scene{position:absolute;inset:0;display:grid;width:100%;height:100%;min-height:0;place-items:center;overflow:hidden;opacity:0;visibility:hidden;pointer-events:none;transform:translate3d(0,0,0);transform-style:preserve-3d;transition:opacity .58s cubic-bezier(.22,1,.36,1),transform .76s cubic-bezier(.16,1,.3,1),visibility .58s step-end;z-index:0}
 .figma-edition .figma-scene.is-active{z-index:2;opacity:1;visibility:visible;pointer-events:auto;transition:opacity .58s cubic-bezier(.22,1,.36,1),transform .76s cubic-bezier(.16,1,.3,1),visibility 0s;}
-.figma-edition .figma-scene.is-leaving{z-index:1;opacity:0;visibility:visible;pointer-events:none;transition:opacity .46s ease,transform .7s cubic-bezier(.16,1,.3,1),visibility 0s;}
-.figma-edition .figma-scene.is-entering.enter-next .figma-frame{clip-path:inset(0 0 0 100%);transform:translate3d(2.6%,0,0) scale(.987);}
-.figma-edition .figma-scene.is-entering.enter-previous .figma-frame{clip-path:inset(0 100% 0 0);transform:translate3d(-2.6%,0,0) scale(.987);}
+.figma-edition .figma-scene.is-leaving{z-index:4;opacity:1;visibility:visible;pointer-events:none;transition:none;}
+.figma-edition .figma-scene.is-entering.enter-next .figma-frame,.figma-edition .figma-scene.is-entering.enter-previous .figma-frame{clip-path:none;transform:translateZ(-42px) scale(.985);filter:brightness(.86);}
 .figma-edition .figma-scene.is-entering .figma-frame{transition:none}
-.figma-edition .figma-scene:not(.is-entering) .figma-frame{transition:clip-path .78s cubic-bezier(.16,1,.3,1),transform .78s cubic-bezier(.16,1,.3,1)}
-.figma-edition .figma-scene.leave-next{transform:translate3d(-1.8%,0,0) rotateY(1.2deg) scale(.985)}
-.figma-edition .figma-scene.leave-previous{transform:translate3d(1.8%,0,0) rotateY(-1.2deg) scale(.985)}
+.figma-edition .figma-scene:not(.is-entering) .figma-frame{transition:clip-path .78s cubic-bezier(.16,1,.3,1),transform .92s cubic-bezier(.22,1,.36,1),filter .92s cubic-bezier(.22,1,.36,1)}
+.figma-edition .figma-scene.is-leaving .figma-frame{overflow:visible;transform-style:preserve-3d;backface-visibility:visible;will-change:transform,filter;}
+.figma-edition .figma-scene.is-leaving.leave-next .figma-frame{transform-origin:0% 50%;animation:magazine-turn-next 1.08s cubic-bezier(.64,0,.22,1) both;}
+.figma-edition .figma-scene.is-leaving.leave-previous .figma-frame{transform-origin:100% 50%;animation:magazine-turn-previous 1.08s cubic-bezier(.64,0,.22,1) both;}
+.figma-edition .figma-scene.is-leaving .figma-frame::before,.figma-edition .figma-scene.is-leaving .figma-frame::after{position:absolute;inset:0;pointer-events:none;content:"";}
+.figma-edition .figma-scene.is-leaving .figma-frame::before{z-index:10;background:linear-gradient(90deg,transparent 0%,rgba(36,5,5,.12) 18%,rgba(24,3,3,.46) 47%,rgba(255,242,242,.48) 53%,rgba(24,3,3,.22) 66%,transparent 100%) no-repeat;background-size:14% 100%;opacity:.8;}
+.figma-edition .figma-scene.is-leaving.leave-next .figma-frame::before{background-position:100% 0;animation:magazine-fold-next 1.08s cubic-bezier(.64,0,.22,1) both;}
+.figma-edition .figma-scene.is-leaving.leave-previous .figma-frame::before{background-position:0 0;animation:magazine-fold-previous 1.08s cubic-bezier(.64,0,.22,1) both;}
+.figma-edition .figma-scene.is-leaving .figma-frame::after{z-index:11;transform:rotateY(180deg) translateZ(1px);backface-visibility:hidden;background:linear-gradient(90deg,#eaded8 0%,#fffaf6 18%,#f2e8e2 49.2%,#d5c5bd 50%,#fffaf6 51%,#f4ebe6 82%,#e5d8d2 100%);box-shadow:inset 0 0 2.4rem rgba(57,10,10,.12),inset 0 0 0 1px rgba(82,38,30,.12);}
+.figma-edition .figma-scene.leave-next,.figma-edition .figma-scene.leave-previous{transform:none;}
 .figma-edition .figma-frame{position:relative;display:grid;width:min(100vw,calc((100svh - 7rem)*1.40625));max-width:100vw;max-height:calc(100svh - 7rem);aspect-ratio:1440/1024;place-items:center;overflow:hidden;background:#661414;box-shadow:0 1.1rem 3.5rem rgba(0,0,0,.28);}
+@keyframes magazine-fold-next{0%{background-position:100% 0}100%{background-position:0 0}}
+@keyframes magazine-fold-previous{0%{background-position:0 0}100%{background-position:100% 0}}
+@keyframes magazine-turn-next{0%{transform:translateZ(0) rotateY(0);filter:brightness(1);box-shadow:0 1.1rem 3.5rem rgba(0,0,0,.28)}22%{transform:translateZ(38px) rotateY(-18deg);filter:brightness(.94);box-shadow:0 1.6rem 4rem rgba(0,0,0,.34)}48%{transform:translateZ(66px) rotateY(-74deg);filter:brightness(.82);box-shadow:0 1.8rem 4.5rem rgba(0,0,0,.4)}70%{transform:translateZ(76px) rotateY(-126deg);filter:brightness(.84);box-shadow:0 1.8rem 4.5rem rgba(0,0,0,.38)}88%{transform:translateZ(36px) rotateY(-164deg);filter:brightness(.92);box-shadow:0 1.2rem 3rem rgba(0,0,0,.28)}100%{transform:translateZ(0) rotateY(-180deg);filter:brightness(1);box-shadow:0 .8rem 2rem rgba(0,0,0,.18)}}
+@keyframes magazine-turn-previous{0%{transform:translateZ(0) rotateY(0);filter:brightness(1);box-shadow:0 1.1rem 3.5rem rgba(0,0,0,.28)}22%{transform:translateZ(38px) rotateY(18deg);filter:brightness(.94);box-shadow:0 1.6rem 4rem rgba(0,0,0,.34)}48%{transform:translateZ(66px) rotateY(74deg);filter:brightness(.82);box-shadow:0 1.8rem 4.5rem rgba(0,0,0,.4)}70%{transform:translateZ(76px) rotateY(126deg);filter:brightness(.84);box-shadow:0 1.8rem 4.5rem rgba(0,0,0,.38)}88%{transform:translateZ(36px) rotateY(164deg);filter:brightness(.92);box-shadow:0 1.2rem 3rem rgba(0,0,0,.28)}100%{transform:translateZ(0) rotateY(180deg);filter:brightness(1);box-shadow:0 .8rem 2rem rgba(0,0,0,.18)}}
 .figma-edition .figma-export{display:block;width:100%;height:100%;object-fit:contain;object-position:center;user-select:none;-webkit-user-drag:none;pointer-events:none}
 .figma-edition .topbar{height:3rem;padding:0;background:transparent;border:0;pointer-events:none}
 .figma-edition .topbar>*{pointer-events:auto}
@@ -78,6 +88,7 @@ html.figma-edition,body.figma-edition{width:100%;height:100%;min-height:100%;ove
 }
 @media(prefers-reduced-motion:reduce){
   .figma-edition .figma-scene,.figma-edition .figma-frame,.figma-edition #index-drawer li{animation:none!important;transition:none!important;transform:none!important;clip-path:none!important}
+  .figma-edition .figma-scene.is-leaving .figma-frame::before,.figma-edition .figma-scene.is-leaving .figma-frame::after{display:none!important}
 }
 
 /* Garimpo e mercúrio — composição responsiva do fólio em HTML. */
