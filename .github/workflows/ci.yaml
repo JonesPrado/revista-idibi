@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validar site estático
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v6
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Conferir arquivos do site
+        run: |
+          test -f index.html
+          test -f styles.css
+          test -f figma-reader.js
+          test -f page-narration.js
+          test -d assets
+
+      - name: Verificar sintaxe JavaScript
+        run: |
+          node --check figma-reader.js
+          node --check page-narration.js
